@@ -2,6 +2,8 @@
 
 int	main ( int argc, char **argv )
 {
-	parser(argc, argv)
+	t_options	data = {0};
+	
+	parser(argc, argv, &data);
 	return (0);
 }

@@ -35,7 +35,7 @@ The allowed functions are the followings:
 ## Theory:
 
 ### Syntax:
-The *ls* command can be written with the following different forms:
+The *ls* command can be written with the following forms:
 - ls
 - ls -lRa
 - ls -l -R -a
@@ -45,7 +45,7 @@ The *ls* command can be written with the following different forms:
 - ls -l dirname -R
 - ls -R dir1 dir2 -a
 
-With all these possibilities we will need a **parser**. It will read and store the needed informations for the program to run.
+With all these possibilities we will need a **parser**. It will read the input and store the needed informations for the program to run.
 
 ### Modularity:
 With the information given by the parser, for performance reasons, the code needs to adapt and not run code or system calls if not needed.<br>
@@ -57,6 +57,6 @@ Here is a detailed list of the options required:
 - **-R**: list subdirectories recursively.
 - **-a**: do not ignore entries starting with '.'.
 - **-r**: reverser order while sorting.
-- **-t**: srt by time, newest first.
+- **-t**: sort by time, newest first.
 
 ## In practice:
