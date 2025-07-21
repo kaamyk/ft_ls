@@ -32,7 +32,7 @@ $(NAME): $(OBJDIR) $(DEPDIR) $(OBJS)
 	echo -e '\033[0;34mObjects compilation: \x1b[32m>>> OK <<<\x1b[37m'
 	echo ""
 	echo -n "Compiling " $(NAME) " ... "
-	$(CC) $(CC_FLAGS) $(OBJS) $(LIBFT) $(PRINTF) -lm -o $(NAME)
+	$(CC) $(CC_FLAGS) $(OBJS) $(PRINTF) $(LIBFT) -lm -o $(NAME)
 	echo -e '\x1b[32m>>> OK <<<\x1b[37m'
 	echo -en '\033[0;34mExecutable '
 	echo -n  $(NAME)

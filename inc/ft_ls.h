@@ -19,6 +19,13 @@
 #include "../ft_libft/inc/libft.h"
 #include "../ft_printf/inc/ft_printf.h"
 
+enum ret_code
+{
+	LS_SUCCESS,
+	LS_ERR_FILE,
+	LS_ERR_FATAL
+};
+
 typedef struct s_options
 {
 	// options
@@ -28,11 +35,11 @@ typedef struct s_options
 	bool	reversed;
 	bool	time_sort;
 
-	char	*to_list;
+	char	**to_list;
 }				t_options;
 
 /* === parser.c === */
-void	parser( int argc, char **argv, t_options *opts );
+void	parser(int argc, char **argv, t_options *opts);
 
 /* === utils.c === */
 
