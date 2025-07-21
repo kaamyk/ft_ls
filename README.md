@@ -59,4 +59,8 @@ Here is a detailed list of the options required:
 - **-r**: reverser order while sorting.
 - **-t**: sort by time, newest first.
 
+As bonuses :
+- **-i**: prints the inode (unique identifier) of the file.
+- **-n**: like -l but prints the user and group ID instead of names.
+
 ## In practice:

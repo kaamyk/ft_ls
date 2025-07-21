@@ -5,16 +5,17 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <pwd.h>
 #include <sys/xattr.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <pwd.h>
 #include <time.h>
-#include <stdlib.h>
 #include <error.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
+#include <error.h>
 
 #include "../ft_libft/inc/libft.h"
 #include "../ft_printf/inc/ft_printf.h"
@@ -26,7 +27,16 @@ enum ret_code
 	LS_ERR_FATAL
 };
 
-typedef struct s_options
+typedef struct	s_file
+{
+	char			*fullpath;
+	struct dirent	dirent;
+	struct stat		stat;
+	struct s_file	*prev;
+	struct s_file	*next;
+}				t_file;
+
+typedef struct	s_ftls
 {
 	// options
 	bool	recursive;
@@ -36,12 +46,30 @@ typedef struct s_options
 	bool	time_sort;
 
 	char	**to_list;
-}				t_options;
+	t_file	*lst_entry;
+
+	// env data
+	uid_t	userid;
+	char	*pwd;
+	char	*current_dir;
+}				t_ftls;
 
 /* === parser.c === */
-void	parser(int argc, char **argv, t_options *opts);
+void	parser(int argc, char **argv, t_ftls *opts);
 
 /* === utils.c === */
+
+/* === error.c === */
+void	get_entrie_err(int err);
+
+/* === env.c === */
+void	get_pwd(t_ftls *data, char **env);
+void	get_uid(t_ftls *data);
+
+/* === list.c === */
+void	ft_lstadd_front(t_list **lst, t_list *new);
+t_file	*ft_lstlast(t_file *lst);
+void	ft_lstadd_back(t_file **lst, t_file *new);
 
 //	Tables
 void	print_tab(char **tab);

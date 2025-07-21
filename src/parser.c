@@ -1,14 +1,14 @@
 #include "../inc/ft_ls.h"
 
-void	print_parser(t_options *data)
+void	print_parser(t_ftls *data)
 {
 	ft_printf("===============\n");
-	ft_printf("Recursive : %d\nLong format : %d\nList all : %d\nReverser : %d\nTime Sort : %d\n", \
+	ft_printf("Recursive : %d\nLong format : %d\nList all : %d\nReverse : %d\nTime Sort : %d\n", \
 			data->recursive, data->long_format, data->list_all, data->reversed, data->time_sort);
 	ft_printf("===============\n");
 }
 
-void	parser(const int argc, char **argv, t_options *data)
+void	parser(const int argc, char **argv, t_ftls *data)
 {
 	if (argc == 1)
 		return ;
@@ -58,6 +58,6 @@ void	parser(const int argc, char **argv, t_options *data)
 	print_parser(data);
 	ft_printf("to_list : \n");
 	print_tab(data->to_list);
-	ft_printf("=============");
+	ft_printf("=============\n");
 	return ; 
 }
