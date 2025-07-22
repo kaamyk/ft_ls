@@ -20,11 +20,17 @@
 #include "../ft_libft/inc/libft.h"
 #include "../ft_printf/inc/ft_printf.h"
 
-enum ret_code
+enum	ret_code
 {
 	LS_SUCCESS,
 	LS_ERR_FILE,
 	LS_ERR_FATAL
+};
+
+enum	sort_type
+{
+	ALPHAB,
+	TIME,
 };
 
 typedef struct	s_file
@@ -32,9 +38,14 @@ typedef struct	s_file
 	char			*fullpath;
 	struct dirent	dirent;
 	struct stat		stat;
-	struct s_file	*prev;
-	struct s_file	*next;
 }				t_file;
+
+typedef struct	s_file_list
+{
+	t_file		file;			// Easier to sort
+	// struct s_file_list	*prev;
+	struct s_file_list	*next;
+}				t_file_list;
 
 typedef struct	s_ftls
 {
@@ -45,14 +56,14 @@ typedef struct	s_ftls
 	bool	reversed;
 	bool	time_sort;
 
-	char	**to_list;
-	t_file	*lst_entry;
+	char		**to_list;
+	t_file_list	*raw_entries;	// linked list
+	t_file		*entries;		// tab
 
 	// display parameters
 	uint8_t		lgest_fname;
 	uint32_t	nb_entries;
 	
-
 	// env data
 	uid_t	userid;
 	char	*pwd;
@@ -62,9 +73,14 @@ typedef struct	s_ftls
 /* === memory.c === */
 void	free_tab(char **tab);
 void	free_t_file(t_file *to_free);
-void	free_entries(t_file *to_free);
+void	free_entries(t_file_list *to_free);
 void	free_t_ftls(t_ftls *to_free);
 
+/* === sort.c === */
+bool	sort_entries(uint8_t type, t_ftls *data);
+
+/* === display.c === */
+void	display(t_ftls *data);
 
 /* === parser.c === */
 void	parser(int argc, char **argv, t_ftls *opts);
@@ -79,14 +95,17 @@ void	get_pwd(t_ftls *data, char **env);
 void	get_uid(t_ftls *data);
 
 /* === list.c === */
-void	ft_lstadd_front(t_list **lst, t_list *new);
-t_file	*ft_lstlast(t_file *lst);
-void	ft_lstadd_back(t_file **lst, t_file *new);
+void		ft_lstadd_front(t_file_list **lst, t_file_list *new);
+t_file_list	*ft_lstlast(t_file_list *lst);
+void		ft_lstadd_back(t_file_list **lst, t_file_list *new);
 
 //	Tables
 void	print_tab(char **tab);
 void	free_tab(char **tab);
 size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
+
+/* === main.c === */
+void	display(t_ftls *data);
 
 #endif

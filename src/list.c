@@ -1,6 +1,6 @@
 #include "../inc/ft_ls.h"
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_file_list **lst, t_file_list *new)
 {
 	if (lst || new)
 	{
@@ -9,9 +9,9 @@ void	ft_lstadd_front(t_list **lst, t_list *new)
 	}
 }
 
-t_file	*ft_lstlast(t_file *lst)
+t_file_list	*ft_lstlast(t_file_list *lst)
 {
-	t_file	*ptr;
+	t_file_list	*ptr = NULL;
 
 	if (!lst)
 		return (NULL);
@@ -25,15 +25,18 @@ t_file	*ft_lstlast(t_file *lst)
 	return (ptr);
 }
 
-void	ft_lstadd_back(t_file **lst, t_file *new)
+void	ft_lstadd_back(t_file_list **lst, t_file_list *new)
 {
-	t_file	*ptr;
+	t_file_list	*ptr = NULL;
 
 	if (!lst || !new)
 		return ;
 	ptr = ft_lstlast(*lst);
 	if (ptr)
+	{
 		ptr->next = new;
+		// new->prev = ptr;
+	}
 	else
 		*lst = new;
 }
