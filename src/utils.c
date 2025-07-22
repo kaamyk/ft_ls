@@ -17,20 +17,6 @@ void	print_tab(char **tab)
 	}
 }
 
-void	free_tab(char **tab)
-{
-	if (tab == NULL)
-		return ;
-
-	char **runner = tab;
-	while (*runner != NULL)
-	{
-		free(*runner);
-		++runner;
-	}
-	free(tab);
-}
-
 size_t	tab_len(char **tab)
 {
 	if (tab == NULL || *tab == NULL)

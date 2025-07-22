@@ -48,11 +48,23 @@ typedef struct	s_ftls
 	char	**to_list;
 	t_file	*lst_entry;
 
+	// display parameters
+	uint8_t		lgest_fname;
+	uint32_t	nb_entries;
+	
+
 	// env data
 	uid_t	userid;
 	char	*pwd;
 	char	*current_dir;
 }				t_ftls;
+
+/* === memory.c === */
+void	free_tab(char **tab);
+void	free_t_file(t_file *to_free);
+void	free_entries(t_file *to_free);
+void	free_t_ftls(t_ftls *to_free);
+
 
 /* === parser.c === */
 void	parser(int argc, char **argv, t_ftls *opts);
@@ -60,7 +72,7 @@ void	parser(int argc, char **argv, t_ftls *opts);
 /* === utils.c === */
 
 /* === error.c === */
-void	get_entrie_err(int err);
+void	print_err(int err);
 
 /* === env.c === */
 void	get_pwd(t_ftls *data, char **env);

@@ -6,17 +6,17 @@ void	get_uid(t_ftls *data)
 
 	if (stat("/proc/self/", &st) == -1)
 	{
-		write(2, "ft_ls: failed to get the uid.\n", 30);
+		print_err(errno);
 		data->userid = -1;
 		return ;
 	}
 	data->userid = st.st_uid;
-	// printf("user -> %d\n", data->userid);
+	printf("user -> %d\n", data->userid);
 }
 
 void	get_pwd(t_ftls *data, char **env)
 {
-	while (*env)
+	while (*env != NULL)
 	{
 		if (*env[0] == 'P' && ft_strnstr(*env, "PWD=", 4) != NULL)
 			break ;
@@ -24,5 +24,5 @@ void	get_pwd(t_ftls *data, char **env)
 	}
 	if (*env != NULL)
 		data->pwd = *env + 4;
-	// printf("pwd -> %s\n", data->pwd);
+	printf("pwd -> %s\n", data->pwd);
 }
