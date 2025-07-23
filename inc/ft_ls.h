@@ -58,7 +58,7 @@ typedef struct	s_ftls
 
 	char		**to_list;
 	t_file_list	*raw_entries;	// linked list
-	t_file		*entries;		// tab
+	// t_file		*entries;		// tab
 
 	// display parameters
 	uint8_t		lgest_fname;
@@ -66,7 +66,6 @@ typedef struct	s_ftls
 	
 	// env data
 	uid_t	userid;
-	char	*pwd;
 	char	*current_dir;
 }				t_ftls;
 
@@ -94,11 +93,11 @@ void	parser(int argc, char **argv, t_ftls *opts);
 void	print_err(int err);
 
 /* === recursive.c === */
-void	recursive(t_ftls *data);
+bool	ftls(t_ftls *data, char *dirname);
 
 /* === env.c === */
-void	get_pwd(t_ftls *data, char **env);
 void	get_uid(t_ftls *data);
+int8_t	set_env(t_ftls *data);
 
 /* === list.c === */
 void		ft_lstadd_front(t_file_list **lst, t_file_list *new);

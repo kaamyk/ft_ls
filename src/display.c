@@ -10,4 +10,5 @@ void	display(t_ftls *data)
 			ft_printf("%s  ", runner->file.dirent.d_name);
 		runner = runner->next;
 	}
+	ft_printf("\n");
 }

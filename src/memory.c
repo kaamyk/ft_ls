@@ -42,4 +42,6 @@ void	free_t_ftls(t_ftls *to_free)
 {
 	free_tab(to_free->to_list);
 	free_entries(to_free->raw_entries);
+	if (to_free->current_dir != NULL)
+		free(to_free->current_dir);
 }

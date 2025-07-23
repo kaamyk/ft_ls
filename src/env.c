@@ -14,15 +14,8 @@ void	get_uid(t_ftls *data)
 	printf("user -> %d\n", data->userid);
 }
 
-void	get_pwd(t_ftls *data, char **env)
+int8_t	set_env(t_ftls *data)
 {
-	while (*env != NULL)
-	{
-		if (*env[0] == 'P' && ft_strnstr(*env, "PWD=", 4) != NULL)
-			break ;
-		++env;
-	}
-	if (*env != NULL)
-		data->pwd = *env + 4;
-	printf("pwd -> %s\n", data->pwd);
+	get_uid(data);
+	return (data->userid);
 }
