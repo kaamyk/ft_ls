@@ -1,6 +1,7 @@
 #include "../inc/ft_ls.h"
 
-int16_t	nc_strcmp(char *s1, char *s2)
+
+int16_t	nc_strcmp(char *s1, char *s2) // non-case_strcmp()
 {
 	while (s1 || s2)
 	{
@@ -12,7 +13,7 @@ int16_t	nc_strcmp(char *s1, char *s2)
 	return (0);
 }
 
-int32_t	filename_cmp(char *fname1, char *fname2)
+int16_t	filename_cmp(char *fname1, char *fname2)
 {
 	if (*fname1 == '.')
 		++fname1;
@@ -36,7 +37,7 @@ bool	check_sorted(t_file_list *raw_entries)
 	return (1);
 }
 
-bool	sort_entries(uint8_t type, t_ftls *data)
+void	sort_entries(uint8_t type, t_ftls *data)
 {
 	(void)type;
 	t_file_list	*r1 =  data->raw_entries;
@@ -60,5 +61,4 @@ bool	sort_entries(uint8_t type, t_ftls *data)
 		r1->file = r2->file;
 		r2->file = tmp;
 	}
-	return (0);
 }

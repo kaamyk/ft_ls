@@ -41,8 +41,7 @@ void	parser(const int argc, char **argv, t_ftls *data)
 						break ;
 					default:
 					 	free_tab(to_list);
-						printf("ft_ls: invalid option -- %c\nTry \'ft_ls --help\' for more information.\n", **runner);
-						fflush(stdout);
+						ft_printf("ft_ls: invalid option -- %c\nTry \'ft_ls --help\' for more information.\n", **runner);
 						exit(LS_ERR_FATAL);
 						break ;
 				}
@@ -51,6 +50,8 @@ void	parser(const int argc, char **argv, t_ftls *data)
 		else if (*runner != NULL)
 		{
 			to_list = tab_append(to_list, *runner);
+			if (to_list == NULL)
+				exit(LS_ERR_FATAL) ;
 		}
 		++runner;
 	}

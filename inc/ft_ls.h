@@ -77,7 +77,10 @@ void	free_entries(t_file_list *to_free);
 void	free_t_ftls(t_ftls *to_free);
 
 /* === sort.c === */
-bool	sort_entries(uint8_t type, t_ftls *data);
+int16_t	nc_strcmp(char *s1, char *s2);
+int16_t	filename_cmp(char *fname1, char *fname2);
+bool	check_sorted(t_file_list *raw_entries);
+void	sort_entries(uint8_t type, t_ftls *data);
 
 /* === display.c === */
 void	display(t_ftls *data);
@@ -89,6 +92,9 @@ void	parser(int argc, char **argv, t_ftls *opts);
 
 /* === error.c === */
 void	print_err(int err);
+
+/* === recursive.c === */
+void	recursive(t_ftls *data);
 
 /* === env.c === */
 void	get_pwd(t_ftls *data, char **env);
@@ -104,6 +110,10 @@ void	print_tab(char **tab);
 void	free_tab(char **tab);
 size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
+
+/* === get_entries.c === */
+bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *tmp_file);
+bool	get_entries(t_ftls *data);
 
 /* === main.c === */
 void	display(t_ftls *data);

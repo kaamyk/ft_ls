@@ -3,8 +3,9 @@
 NAME		=	ft_ls
 
 SRCDIR		=	src
-SRCS		=	$(SRCDIR)/main.c	$(SRCDIR)/parser.c	$(SRCDIR)/utils.c	$(SRCDIR)/env.c	$(SRCDIR)/error.c \
-				$(SRCDIR)/list.c	$(SRCDIR)/memory.c	$(SRCDIR)/sort.c	$(SRCDIR)/display.c
+SRCS		=	$(SRCDIR)/main.c		$(SRCDIR)/parser.c	$(SRCDIR)/utils.c	$(SRCDIR)/env.c		$(SRCDIR)/error.c \
+				$(SRCDIR)/list.c		$(SRCDIR)/memory.c	$(SRCDIR)/sort.c	$(SRCDIR)/display.c	$(SRCDIR)/recursive.c \
+				$(SRCDIR)/get_entries.c 
 
 OBJDIR		=	.obj
 OBJS		=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))

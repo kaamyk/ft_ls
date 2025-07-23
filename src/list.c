@@ -33,10 +33,7 @@ void	ft_lstadd_back(t_file_list **lst, t_file_list *new)
 		return ;
 	ptr = ft_lstlast(*lst);
 	if (ptr)
-	{
 		ptr->next = new;
-		// new->prev = ptr;
-	}
 	else
 		*lst = new;
 }

@@ -7,7 +7,7 @@ void	display(t_ftls *data)
 	while (runner != NULL)
 	{
 		if (data->list_all == 1 || runner->file.dirent.d_name[0] != '.')
-			ft_printf("%*s", data->lgest_fname, runner->file.dirent.d_name);
+			ft_printf("%s  ", runner->file.dirent.d_name);
 		runner = runner->next;
 	}
 }
