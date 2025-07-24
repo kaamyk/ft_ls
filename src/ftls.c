@@ -4,12 +4,14 @@ char	*update_path(char *oldpath, char *to_add)
 {
 	char	*tmp = NULL;
 	if (to_add != NULL)
+	{
 		tmp = ft_strjoin(oldpath, "/");
+		oldpath = ft_strjoin(tmp, to_add);
+	}
 	else
 		tmp = ft_strdup(oldpath);
 	if (tmp == NULL)
 		return (NULL);
-	oldpath = ft_strjoin(tmp, to_add);
 	free(tmp);
 	return (oldpath);
 }
