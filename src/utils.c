@@ -37,7 +37,7 @@ void	tab_alloc_exit(char **tab)
 char	**tab_append(char **tab, char *to_append)
 {
 	uint32_t i = 0;
-	char	**joined = malloc(sizeof(char *) * (tab_len(tab) + 2));	// Allocate old tab + new entry + NULL ptr
+	char	**joined = ft_calloc((tab_len(tab) + 2), sizeof(char *));	// Allocate old tab + new entry + NULL ptr
 	if (joined == NULL)
 	{
 		print_err(errno);

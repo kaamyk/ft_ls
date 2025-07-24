@@ -78,8 +78,10 @@ void	free_t_ftls(t_ftls *to_free);
 /* === sort.c === */
 int16_t	nc_strcmp(char *s1, char *s2);
 int16_t	filename_cmp(char *fname1, char *fname2);
-bool	check_sorted(t_file_list *raw_entries);
+bool	check_sorted_entries(t_file_list *raw_entries);
 void	sort_entries(uint8_t type, t_ftls *data);
+bool	check_sorted_tolist(char **to_list);
+void	sort_tolist(t_ftls *data);
 
 /* === display.c === */
 void	display(t_file_list *entries, bool list_all);
