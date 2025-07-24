@@ -82,7 +82,7 @@ bool	check_sorted(t_file_list *raw_entries);
 void	sort_entries(uint8_t type, t_ftls *data);
 
 /* === display.c === */
-void	display(t_ftls *data);
+void	display(t_file_list *entries, bool list_all);
 
 /* === parser.c === */
 void	parser(int argc, char **argv, t_ftls *opts);
@@ -91,9 +91,6 @@ void	parser(int argc, char **argv, t_ftls *opts);
 
 /* === error.c === */
 void	print_err(int err);
-
-/* === recursive.c === */
-bool	ftls(t_ftls *data, char *dirname);
 
 /* === env.c === */
 void	get_uid(t_ftls *data);
@@ -114,7 +111,11 @@ char	**tab_append(char **tab, char *to_append);
 bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *tmp_file);
 bool	get_entries(t_ftls *data);
 
+/* === ftls.c === */
+char	*update_path(char *oldpath, char *to_add);
+void	ftls_display(t_ftls *tmp_data);
+bool	ftls(t_ftls *data, char *dirname);
+
 /* === main.c === */
-void	display(t_ftls *data);
 
 #endif

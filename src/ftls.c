@@ -2,62 +2,75 @@
 
 char	*update_path(char *oldpath, char *to_add)
 {
-	char	*tmp = ft_strjoin(oldpath, to_add);
+	char	*tmp = NULL;
+	if (to_add != NULL)
+		tmp = ft_strjoin(oldpath, "/");
+	else
+		tmp = ft_strdup(oldpath);
 	if (tmp == NULL)
-	{
 		return (NULL);
-	}
-
-	free(oldpath);
-	oldpath = ft_strjoin(tmp, "/");
+	oldpath = ft_strjoin(tmp, to_add);
 	free(tmp);
 	return (oldpath);
 }
 
+void	ftls_display(t_ftls *tmp_data)
+{
+	if (tmp_data->recursive == 1)
+		ft_printf("%s:\n", tmp_data->current_dir);
+	sort_entries(ALPHAB, tmp_data);
+	display(tmp_data->raw_entries, tmp_data->list_all);
+}
+
 bool	ftls(t_ftls *data, char *dirname)
 {
-	printf("=== recursive (data->current_dir -> [%s], dirname -> [%s]) === \n", data->current_dir, dirname);
-	t_file_list	*r_entries = data->raw_entries;
+	t_file_list	*r_entries = NULL;
+	char		*d_name = NULL;
+	t_ftls		tmp_data = {0};
+
+	ft_memcpy(&tmp_data, data, sizeof(t_ftls));
+	tmp_data.raw_entries = NULL;
+	printf("to_list -> ");
+	print_tab(tmp_data.to_list);
 	
-	if ((data->current_dir = update_path(data->current_dir, dirname)) == NULL)
+	if ((tmp_data.current_dir = update_path(tmp_data.current_dir, dirname)) == NULL)
 	{
 		print_err(errno);
 		return (1);
 	}
-	printf("fullpath -> [%s]\n", data->current_dir);
-	r_entries = NULL;
-	ft_printf("%s:\n", data->current_dir);
-	if (get_entries(data) == 1)
+	if (get_entries(&tmp_data) == 1)
 	{
-		// free_entries(data->raw_entries);
-		free(data->current_dir);
+		free(tmp_data.current_dir);
 		return (1);
 	}
-	r_entries = data->raw_entries;
-	display(data);
-	if (data->recursive == 0)
+	ftls_display(&tmp_data);
+	if (tmp_data.recursive == 0)
 		goto _end_ftls;
+	r_entries = tmp_data.raw_entries;
 	while (r_entries != NULL)
 	{
-		printf("entry -> [%s]\n", r_entries->file.dirent.d_name);
+		d_name = r_entries->file.dirent.d_name;
 		if (r_entries->file.dirent.d_type == DT_DIR)
 		{ 
-			if ((r_entries->file.dirent.d_name[0] == '.' && data->list_all == 1)
-			|| (ft_strncmp(r_entries->file.dirent.d_name, ".", ft_strlen(r_entries->file.dirent.d_name)) != 0 
-			&& ft_strncmp(r_entries->file.dirent.d_name, "..", ft_strlen(r_entries->file.dirent.d_name)) != 0))
+			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0 
+			&& ft_strncmp(d_name, "..", ft_strlen(d_name)) != 0)
 			{
-				if (ftls(data, r_entries->file.dirent.d_name) == 1)
+				if (d_name[0] == '.' && data->list_all == 0)
+					goto _next;
+				ft_printf("\n");
+				if (ftls(&tmp_data, d_name) == 1)
 				{
-					free_entries(data->raw_entries);
-					free(data->current_dir);
+					free(tmp_data.current_dir);
+					free_entries(tmp_data.raw_entries);
 					return (1);
 				}
 			}
 		}
-		printf("data->next -> %p\n", r_entries->next);
+		_next:
 		r_entries = r_entries->next;
 	}
 	_end_ftls:
-	// free_entries(data->raw_entries);
+	free(tmp_data.current_dir);
+	free_entries(tmp_data.raw_entries);
 	return (0);
 }

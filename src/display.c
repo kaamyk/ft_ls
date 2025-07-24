@@ -1,12 +1,12 @@
 #include "../inc/ft_ls.h"
 
-void	display(t_ftls *data)
+void	display(t_file_list *entries, bool list_all)
 {
-	t_file_list	*runner = data->raw_entries;
+	t_file_list	*runner = entries;
 
 	while (runner != NULL)
 	{
-		if (data->list_all == 1 || runner->file.dirent.d_name[0] != '.')
+		if (list_all == 1 || runner->file.dirent.d_name[0] != '.')
 			ft_printf("%s  ", runner->file.dirent.d_name);
 		runner = runner->next;
 	}
