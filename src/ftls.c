@@ -105,7 +105,7 @@ bool	ftls(t_ftls *data, char *dirname)
 		free(tmp_data.current_dir);
 		return (1);
 	}
-	ftls_display(&tmp_data, dirname);
+	ftls_display(&tmp_data);
 	if (tmp_data.recursive == 1
 		&& recursive(&tmp_data, r_entries) == 1)
 			return (1);
