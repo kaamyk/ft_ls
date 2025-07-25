@@ -38,6 +38,7 @@ bool	get_entries(t_ftls *data)
 			data->lgest_fname = ft_strlen(tmp_file->file.dirent.d_name);
 		if (data->long_format == 1 || data->time_sort == 1)
 		{
+			// Update le path pour file qu'on lit. Actuellement on lit en boucle le meme
 			if (stat(data->current_dir, tmp_stat) == -1)
 				return (err_get_entries(errno, dir, tmp_stat, data->raw_entries));
 			tmp_file->file.stat = *tmp_stat;

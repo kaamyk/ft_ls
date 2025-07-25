@@ -31,6 +31,8 @@ enum	sort_type
 {
 	ALPHAB,
 	TIME,
+	R_ALPHAB,
+	R_TIME
 };
 
 typedef struct	s_file
@@ -79,7 +81,7 @@ void	free_t_ftls(t_ftls *to_free);
 /* === sort.c === */
 int16_t	nc_strcmp(char *s1, char *s2);
 int16_t	filename_cmp(char *fname1, char *fname2);
-bool	check_sorted_entries(t_file_list *raw_entries);
+bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type);
 void	sort_entries(uint8_t type, t_ftls *data);
 bool	check_sorted_tolist(char **to_list);
 void	sort_tolist(t_ftls *data);

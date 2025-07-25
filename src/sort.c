@@ -28,17 +28,43 @@ int16_t	filename_cmp(char *fname1, char *fname2)
 	return (nc_strcmp(fname1, fname2));
 }
 
-bool	check_sorted_entries(t_file_list *raw_entries)
+bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 {
-	t_file_list	*r = raw_entries;
-	t_file_list *r1 = NULL;
+	t_file_list	*rs[2] =  {raw_entries, NULL};
+	time_t		tm[2] = {0};
 	
-	while (r->next != NULL)
+	while (rs[0]->next != NULL)
 	{
-		r1 = r->next;
-		if (filename_cmp(r->file.dirent.d_name, r1->file.dirent.d_name) > 0)
-			return (0);
-		r = r1;
+		rs[1] = rs[0]->next;
+		if ((type & 1) == 1)
+		{
+			printf("type time\n");
+			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
+			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
+			printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
+		}
+		switch (type)
+		{
+			case ALPHAB:
+				if (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0)
+					return (0);
+				break ;
+			case TIME:
+				if (tm[0] > tm[1])
+					return (0);
+				break ;
+			case R_ALPHAB:
+				if (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0)
+					return (0);
+				break ;
+			case R_TIME:
+				if (tm[0] < tm[1])
+					return (0);
+				break ;
+			default:
+				break ;
+		}
+		rs[0] = rs[1];
 	}
 	return (1);
 }
@@ -46,26 +72,57 @@ bool	check_sorted_entries(t_file_list *raw_entries)
 void	sort_entries(uint8_t type, t_ftls *data)
 {
 	(void)type;
-	t_file_list	*r1 =  data->raw_entries;
-	t_file_list	*r2 = NULL;
+	t_file_list	*rs[2] =  {data->raw_entries, data->raw_entries->next};
 	t_file		tmp = {0};
+	long		tm[2] = {0};
+	bool		cont = 0;
 
-	while (check_sorted_entries(data->raw_entries) == 0)
+	printf("bf while type == %d\n", type);
+	while (check_sorted_entries(data->raw_entries, type) == 0)
 	{
-		if (r2 == NULL)
+		printf("type == %d | %d\n", type, (type & 1));
+		if (rs[1] == NULL)
 		{
-			r1 = data->raw_entries;
-			r2 = r1->next;
+			rs[0] = data->raw_entries;
+			rs[1] = rs[0]->next;
 		}
-		if (filename_cmp(r1->file.dirent.d_name, r2->file.dirent.d_name) <= 0)
+		if ((type & 1) == 1)
 		{
-			r1 = r1->next;
-			r2 = r1->next;
-			continue ;
+			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
+			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
+			printf("type time\n");
+			printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
+			fflush(stdout);
 		}
-		tmp = r1->file;
-		r1->file = r2->file;
-		r2->file = tmp;
+		cont = 0;
+		switch (type)
+		{
+			case ALPHAB:
+				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) <= 0) & 1;
+				break ;
+			case TIME:
+				cont = (tm[0] <= tm[1]) & 1;
+				break ;
+			case R_ALPHAB:
+				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) >= 0) & 1;
+				break ;
+			case R_TIME:
+				cont = (tm[0] >= tm[1]) & 1;
+				break ;
+			default:
+				break ;
+		}
+		if (cont == 1)
+		{
+			rs[0] = rs[0]->next;
+			rs[1] = rs[0]->next;
+		}
+		else
+		{
+			tmp = rs[0]->file;
+			rs[0]->file = rs[1]->file;
+			rs[1]->file = tmp;
+		}
 	}
 }
 

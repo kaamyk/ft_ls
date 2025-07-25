@@ -56,6 +56,11 @@ void	ftls_display(t_ftls *tmp_data)
 
 	if ((tmp_data->recursive == 1 || tmp_data->to_list != NULL) && tmp_data->nb_to_list > 1)
 		ft_printf("%s:\n", tmp_data->current_dir);
+	if (tmp_data->time_sort == 1)
+		sort_type |= 1;
+	if (tmp_data->reversed == 1)
+		sort_type |= 2;
+	printf("sort_type = %d\n", sort_type);
 	sort_entries(sort_type, tmp_data);
 	display(tmp_data->raw_entries, tmp_data->list_all);
 }

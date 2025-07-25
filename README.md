@@ -1,6 +1,8 @@
 # ft_ls
 > An home-made version of the famous *ls* unix command.
 
+> **VOIR COMMENTAIRE GET_ENTRIES()**
+
 ## Summary:
 - [Usage](#usage)
 - [Goals](#goals)
