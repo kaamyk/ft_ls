@@ -33,7 +33,7 @@ bool	get_entries(t_ftls *data)
 		tmp_file = ft_calloc(1, sizeof(t_file_list));
 		if (tmp_file == NULL)
 			return (err_get_entries(errno, dir, tmp_stat, data->raw_entries));
-		memmove(&(tmp_file->file.dirent), entry, sizeof(struct dirent));
+		ft_memmove(&(tmp_file->file.dirent), entry, sizeof(struct dirent));
 		if (ft_strlen(tmp_file->file.dirent.d_name) > data->lgest_fname)
 			data->lgest_fname = ft_strlen(tmp_file->file.dirent.d_name);
 		if (data->long_format == 1 || data->time_sort == 1)
