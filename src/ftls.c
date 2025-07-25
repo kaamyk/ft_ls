@@ -22,7 +22,6 @@ char	*format_path(char **oldpath)
 
 char	*update_path(char *oldpath, char *to_add)
 {
-	// printf("update_path(%s, %s)\n", oldpath, to_add);
 	char	*tmp = NULL;
 	
 	if (to_add != NULL)
@@ -51,13 +50,11 @@ char	*update_path(char *oldpath, char *to_add)
 	return (oldpath);
 }
 
-void	ftls_display(t_ftls *tmp_data, char	*to_list)
+void	ftls_display(t_ftls *tmp_data)
 {
 	uint8_t	sort_type = ALPHAB;
 
-	
-	(void)to_list;
-	if (tmp_data->recursive == 1 || tmp_data->to_list != NULL)
+	if ((tmp_data->recursive == 1 || tmp_data->to_list != NULL) && tmp_data->nb_to_list > 1)
 		ft_printf("%s:\n", tmp_data->current_dir);
 	sort_entries(sort_type, tmp_data);
 	display(tmp_data->raw_entries, tmp_data->list_all);
@@ -99,6 +96,7 @@ bool	ftls(t_ftls *data, char *dirname)
 	t_ftls		tmp_data = {0};
 
 	ft_memcpy(&tmp_data, data, sizeof(t_ftls));
+	
 	tmp_data.raw_entries = NULL;
 	if ((tmp_data.current_dir = update_path(tmp_data.current_dir, dirname)) == NULL)
 		return (1);

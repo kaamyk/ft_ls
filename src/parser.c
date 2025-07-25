@@ -52,6 +52,7 @@ void	parser(const int argc, char **argv, t_ftls *data)
 			to_list = tab_append(to_list, *runner);
 			if (to_list == NULL)
 				exit(LS_ERR_FATAL) ;
+			++data->nb_to_list;
 		}
 		++runner;
 	}

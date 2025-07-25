@@ -89,6 +89,7 @@ typedef struct	s_ftls
 	// display parameters
 	uint8_t		lgest_fname;
 	uint32_t	nb_entries;
+	uint16_t	nb_to_list;
 	
 	// env data
 	uid_t	userid;

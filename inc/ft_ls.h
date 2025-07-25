@@ -63,6 +63,7 @@ typedef struct	s_ftls
 	// display parameters
 	uint8_t		lgest_fname;
 	uint32_t	nb_entries;
+	uint16_t	nb_to_list;
 	
 	// env data
 	uid_t	userid;
@@ -116,7 +117,7 @@ bool	get_entries(t_ftls *data);
 /* === ftls.c === */
 char	*format_path(char **oldpath);
 char	*update_path(char *oldpath, char *to_add);
-void	ftls_display(t_ftls *tmp_data, char	*to_list);
+void	ftls_display(t_ftls *tmp_data);
 bool	ftls(t_ftls *data, char *dirname);
 
 /* === main.c === */
