@@ -1,16 +1,42 @@
 #include "../inc/ft_ls.h"
 
+char	*format_path(char **oldpath)
+{
+	char	*last_sl = NULL;
+	char	*tmp = NULL;
+
+	last_sl = ft_strrchr(*oldpath, '/');
+	if (last_sl != NULL)
+	{
+		if (*(last_sl - 1) == '/')
+		{
+			while (last_sl != *oldpath && *last_sl == '/')
+				--last_sl;
+		}
+		tmp = ft_calloc(last_sl - *oldpath + 2, 1);
+		ft_strlcpy(tmp, *oldpath, last_sl - *oldpath + 2);
+		*oldpath = tmp;
+	}
+	return (*oldpath);
+}
+
 char	*update_path(char *oldpath, char *to_add)
 {
 	// printf("update_path(%s, %s)\n", oldpath, to_add);
 	char	*tmp = NULL;
+	
 	if (to_add != NULL)
 	{
-		tmp = ft_strjoin(oldpath, "/");
-		if (tmp == NULL)
+		if (oldpath != NULL)
 		{
-			print_err(errno);
-			return (NULL);
+			format_path(&oldpath);
+			tmp = ft_strjoin(oldpath, "/");
+			if (tmp == NULL)
+			{
+				print_err(errno);
+				return (NULL);
+			}
+			free(oldpath);
 		}
 		oldpath = ft_strjoin(tmp, to_add);
 	}
@@ -25,11 +51,15 @@ char	*update_path(char *oldpath, char *to_add)
 	return (oldpath);
 }
 
-void	ftls_display(t_ftls *tmp_data)
+void	ftls_display(t_ftls *tmp_data, char	*to_list)
 {
+	uint8_t	sort_type = ALPHAB;
+
+	
+	(void)to_list;
 	if (tmp_data->recursive == 1 || tmp_data->to_list != NULL)
 		ft_printf("%s:\n", tmp_data->current_dir);
-	sort_entries(ALPHAB, tmp_data);
+	sort_entries(sort_type, tmp_data);
 	display(tmp_data->raw_entries, tmp_data->list_all);
 }
 
@@ -77,7 +107,7 @@ bool	ftls(t_ftls *data, char *dirname)
 		free(tmp_data.current_dir);
 		return (1);
 	}
-	ftls_display(&tmp_data);
+	ftls_display(&tmp_data, dirname);
 	if (tmp_data.recursive == 1
 		&& recursive(&tmp_data, r_entries) == 1)
 			return (1);

@@ -114,8 +114,9 @@ bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *tmp_
 bool	get_entries(t_ftls *data);
 
 /* === ftls.c === */
+char	*format_path(char **oldpath);
 char	*update_path(char *oldpath, char *to_add);
-void	ftls_display(t_ftls *tmp_data);
+void	ftls_display(t_ftls *tmp_data, char	*to_list);
 bool	ftls(t_ftls *data, char *dirname);
 
 /* === main.c === */

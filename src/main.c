@@ -2,14 +2,20 @@
 
 int	main(int argc, char **argv)
 {
-	char		*root = ft_strdup(".");
+	char		*root = NULL;
 	t_ftls		data = {0};
 	uint16_t	ctr = 0;
 	
 	parser(argc, argv, &data);
 	printf("> Parser OK <\n");
 		
-	if ((data.current_dir = root) == NULL || set_env(&data) == -1)
+	if (data.to_list == NULL)
+	{
+		root = ft_strdup(".");
+		if (root == NULL)
+			return (1);
+	}
+	if (set_env(&data) == -1)
 	{
 		free_tab(data.to_list);
 		exit(1);
