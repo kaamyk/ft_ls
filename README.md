@@ -231,7 +231,7 @@ bool	ftls(t_ftls *data, char *dirname)
 
 	ft_memcpy(&tmp_data, data, sizeof(t_ftls));
 	tmp_data.raw_entries = NULL;
-	if ((tmp_data.current_dir = update_path(tmp_data.current_dir, dirname)) == NULL)
+	if ((tmp_data.current_dir = path_update_subdirtmp_data.current_dir, dirname)) == NULL)
 		return (1);
 	if (get_entries(&tmp_data) == 1)
 	{

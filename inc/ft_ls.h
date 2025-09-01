@@ -1,4 +1,4 @@
-#ifndef	FTLS_H
+#ifndef FTLS_H
 #define FTLS_H
 
 #include <stdio.h>
@@ -16,6 +16,7 @@
 #include <string.h>
 #include <errno.h>
 #include <error.h>
+#include <limits.h>
 
 #include "../ft_libft/inc/libft.h"
 #include "../ft_printf/inc/ft_printf.h"
@@ -113,12 +114,15 @@ size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
 
 /* === get_entries.c === */
-bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *tmp_file);
+bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_entries, t_file_list *tmp_file);
 bool	get_entries(t_ftls *data);
+
+/* === path.c === */
+char	*path_update_subdir(char *oldpath, char *to_add);
+char	*path_update_file(char *oldpath, char *to_add);
 
 /* === ftls.c === */
 char	*format_path(char **oldpath);
-char	*update_path(char *oldpath, char *to_add);
 void	ftls_display(t_ftls *tmp_data);
 bool	ftls(t_ftls *data, char *dirname);
 

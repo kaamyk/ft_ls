@@ -20,35 +20,6 @@ char	*format_path(char **oldpath)
 	return (*oldpath);
 }
 
-char	*update_path(char *oldpath, char *to_add)
-{
-	char	*tmp = NULL;
-	
-	if (to_add != NULL)
-	{
-		if (oldpath != NULL)
-		{
-			format_path(&oldpath);
-			tmp = ft_strjoin(oldpath, "/");
-			if (tmp == NULL)
-			{
-				print_err(errno);
-				return (NULL);
-			}
-			free(oldpath);
-		}
-		oldpath = ft_strjoin(tmp, to_add);
-	}
-	else
-	{
-		tmp = oldpath;
-		oldpath = ft_strdup(tmp);
-	}
-	if (oldpath == NULL)
-		print_err(errno);
-	free(tmp);
-	return (oldpath);
-}
 
 void	ftls_display(t_ftls *tmp_data)
 {
@@ -103,8 +74,9 @@ bool	ftls(t_ftls *data, char *dirname)
 	ft_memcpy(&tmp_data, data, sizeof(t_ftls));
 	
 	tmp_data.raw_entries = NULL;
-	if ((tmp_data.current_dir = update_path(tmp_data.current_dir, dirname)) == NULL)
+	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
+	printf("Before get_entries() => tmp_data.current_dir -> %s\n", tmp_data.current_dir);
 	if (get_entries(&tmp_data) == 1)
 	{
 		free(tmp_data.current_dir);
