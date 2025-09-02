@@ -25,6 +25,8 @@ int	main(int argc, char **argv)
 	while (data.to_list[ctr] != NULL)
 	{
 		// printf("*data->to_list -> %s\n", data.to_list[ctr]);
+		data.to_list[ctr] = format_path(&data.to_list[ctr]);
+		printf("data.to_list[%d] = %s\n", ctr, data.to_list[ctr]);
 		if (ftls(&data, data.to_list[ctr]) == 1)
 		{
 			free_t_ftls(&data);

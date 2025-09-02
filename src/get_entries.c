@@ -30,7 +30,7 @@ bool	get_entries_init(const t_ftls *data, DIR **dir, struct stat **buf_stat, cha
 		return (1);
 	}
 	*buf_stat = ft_calloc(1, sizeof(struct stat));
-	if (buf_stat = NULL)
+	if (buf_stat == NULL)
 	{
 		print_err(errno);
 		return (1);
@@ -54,8 +54,9 @@ bool	get_entries(t_ftls *data)
 	char			*buf_path = NULL;
 	printf("Current dir => %s\n", data->current_dir);
 
-	if (get_entries_alloc(data, &dir, &buf_stat, &buf_path) == 1)
+	if (get_entries_init(data, &dir, &buf_stat, &buf_path) == 1)
 		return (1);
+	ft_strcpy(buf_path, data->current_dir);
 	while ((entry = readdir(dir)) != NULL)
 	{
 		new_file = ft_calloc(1, sizeof(t_file_list));
@@ -71,7 +72,7 @@ bool	get_entries(t_ftls *data)
 			buf_path =  path_update_file(buf_path, entry->d_name);
 			printf("entry->name == %s\n", entry->d_name);
 			
-			if (stat(entry->d_name, buf_stat) == -1)
+			if (stat(buf_path, buf_stat) == -1)
 			{
 				printf("errno == %d\n", errno);
 				return (err_get_entries(errno, dir, buf_stat, data->raw_entries, new_file));

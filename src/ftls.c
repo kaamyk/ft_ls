@@ -1,26 +1,5 @@
 #include "../inc/ft_ls.h"
 
-char	*format_path(char **oldpath)
-{
-	char	*last_sl = NULL;
-	char	*tmp = NULL;
-
-	last_sl = ft_strrchr(*oldpath, '/');
-	if (last_sl != NULL)
-	{
-		if (*(last_sl - 1) == '/')
-		{
-			while (last_sl != *oldpath && *last_sl == '/')
-				--last_sl;
-		}
-		tmp = ft_calloc(last_sl - *oldpath + 2, 1);
-		ft_strlcpy(tmp, *oldpath, last_sl - *oldpath + 2);
-		*oldpath = tmp;
-	}
-	return (*oldpath);
-}
-
-
 void	ftls_display(t_ftls *tmp_data)
 {
 	uint8_t	sort_type = ALPHAB;

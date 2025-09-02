@@ -118,11 +118,11 @@ bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_
 bool	get_entries(t_ftls *data);
 
 /* === path.c === */
+char	*format_path(char **oldpath);
 char	*path_update_subdir(char *oldpath, char *to_add);
 char	*path_update_file(char *oldpath, char *to_add);
 
 /* === ftls.c === */
-char	*format_path(char **oldpath);
 void	ftls_display(t_ftls *tmp_data);
 bool	ftls(t_ftls *data, char *dirname);
 
