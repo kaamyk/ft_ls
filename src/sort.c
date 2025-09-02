@@ -57,7 +57,7 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 					return (0);
 				break ;
 			case R_TIME:
-				if (tm[0] < tm[1])
+				if (tm[0] > tm[1])
 					return (0);
 				break ;
 			default:
@@ -100,7 +100,7 @@ void	sort_entries(uint8_t type, t_ftls *data)
 				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) >= 0) & 1;
 				break ;
 			case R_TIME:
-				cont = (tm[0] >= tm[1]) & 1;
+				cont = (tm[0] <= tm[1]) & 1;
 				break ;
 			default:
 				break ;
@@ -119,7 +119,7 @@ void	sort_entries(uint8_t type, t_ftls *data)
 	}
 }
 
-bool	check_sorted_tolist(char **to_list)
+bool	check_sorted_tolist(char **to_list, const bool reversed)
 {
 	char	**r = to_list;
 	char	**r1 = NULL;
@@ -130,8 +130,12 @@ bool	check_sorted_tolist(char **to_list)
 		return (1);
 	while (*r1 != NULL)
 	{
-		if (filename_cmp(*r, *r1) > 0)
+		if ((reversed == 1 && filename_cmp(*r, *r1) <= 0) \
+			|| (reversed == 0 && filename_cmp(*r, *r1) >= 0))
+		{
+			printf("fdlA;\n");
 			return (0);
+		}
 		r = r1++;
 	}
 	return (1);
@@ -147,14 +151,16 @@ void	sort_tolist(t_ftls *data)
 		r1 = r + 1;
 	else
 		return ;
-	while (check_sorted_tolist(data->to_list) == 0)
+	while (check_sorted_tolist(data->to_list, data->reversed) == 0)
 	{
 		if (*r1 == NULL)
 		{
 			r = data->to_list;
 			r1 = r + 1;
 		}
-		if (filename_cmp(*r, *r1) <= 0)
+		// Integrer l'option reverse
+		if ((data->reversed == 1 && filename_cmp(*r, *r1) >= 0) \
+			|| (data->reversed == 0 && filename_cmp(*r, *r1) <= 0))
 		{
 			r = r1++;
 			continue ;
