@@ -70,18 +70,15 @@ bool	get_entries(t_ftls *data)
 			// Update le path pour file qu'on lit. Actuellement on lit en boucle le meme
 			// Check la ligne en dessous
 			buf_path =  path_update_file(buf_path, entry->d_name);
-			printf("entry->name == %s\n", entry->d_name);
-			
+			// printf("entry->name == %s\n", entry->d_name);
 			if (stat(buf_path, buf_stat) == -1)
-			{
-				printf("errno == %d\n", errno);
 				return (err_get_entries(errno, dir, buf_stat, data->raw_entries, new_file));
-			}
 			new_file->file.stat = *buf_stat;
 		}
 		ft_lstadd_back(&(data->raw_entries), new_file);
 		++data->nb_entries;
 	}
+	free(buf_path);
 	leave_get_entries(dir, buf_stat, entry);
 	return (0);
 }

@@ -64,6 +64,6 @@ char	*path_update_file(char *oldpath, char *to_add)
 
 	ft_strlcpy(n_path, oldpath, len_to_keep + 1);
 	ft_memcpy(n_path + len_to_keep, to_add, ft_strlen(to_add));
-	// printf("path_update_file result => %s\n", n_path);
+	free(oldpath);
 	return (n_path);
 }

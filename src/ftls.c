@@ -10,7 +10,6 @@ void	ftls_display(t_ftls *tmp_data)
 		sort_type |= 1;
 	if (tmp_data->reversed == 1)
 		sort_type |= 2;
-	printf("sort_type = %d\n", sort_type);
 	sort_entries(sort_type, tmp_data);
 	display(tmp_data->raw_entries, tmp_data->list_all);
 }
@@ -55,7 +54,7 @@ bool	ftls(t_ftls *data, char *dirname)
 	tmp_data.raw_entries = NULL;
 	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
-	printf("Before get_entries() => tmp_data.current_dir -> %s\n", tmp_data.current_dir);
+	// printf("Before get_entries() => tmp_data.current_dir -> %s\n", tmp_data.current_dir);
 	if (get_entries(&tmp_data) == 1)
 	{
 		free(tmp_data.current_dir);

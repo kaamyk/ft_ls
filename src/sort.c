@@ -1,6 +1,5 @@
 #include "../inc/ft_ls.h"
 
-
 int16_t	nc_strcmp(char *s1, char *s2) // non-case_strcmp()
 {
 	while (*s1 || *s2)
@@ -38,10 +37,10 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 		rs[1] = rs[0]->next;
 		if ((type & 1) == 1)
 		{
-			printf("type time\n");
+			// printf("type time\n");
 			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
 			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
-			printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
+			// printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
 		}
 		switch (type)
 		{
@@ -50,7 +49,7 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 					return (0);
 				break ;
 			case TIME:
-				if (tm[0] > tm[1])
+				if (tm[0] < tm[1])
 					return (0);
 				break ;
 			case R_ALPHAB:
@@ -71,16 +70,13 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 
 void	sort_entries(uint8_t type, t_ftls *data)
 {
-	(void)type;
 	t_file_list	*rs[2] =  {data->raw_entries, data->raw_entries->next};
 	t_file		tmp = {0};
 	long		tm[2] = {0};
 	bool		cont = 0;
 
-	printf("bf while type == %d\n", type);
 	while (check_sorted_entries(data->raw_entries, type) == 0)
 	{
-		printf("type == %d | %d\n", type, (type & 1));
 		if (rs[1] == NULL)
 		{
 			rs[0] = data->raw_entries;
@@ -90,9 +86,6 @@ void	sort_entries(uint8_t type, t_ftls *data)
 		{
 			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
 			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
-			printf("type time\n");
-			printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
-			fflush(stdout);
 		}
 		cont = 0;
 		switch (type)
@@ -101,7 +94,7 @@ void	sort_entries(uint8_t type, t_ftls *data)
 				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) <= 0) & 1;
 				break ;
 			case TIME:
-				cont = (tm[0] <= tm[1]) & 1;
+				cont = (tm[0] >= tm[1]) & 1;
 				break ;
 			case R_ALPHAB:
 				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) >= 0) & 1;
