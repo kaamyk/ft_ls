@@ -11,7 +11,6 @@ void	get_uid(t_ftls *data)
 		return ;
 	}
 	data->userid = st.st_uid;
-	printf("user -> %d\n", data->userid);
 }
 
 int8_t	set_env(t_ftls *data)

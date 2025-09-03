@@ -62,10 +62,10 @@ We will then take special care to **separate** the code (in particular options) 
 ### Options:
 Here is a detailed list of the options required:
 - **-l**: use a long listing format. One line for each item with informations about rights, type, owner, group,  size, last modified and the filename.
-- **-R**: list subdirectories recursively.
-- **-a**: do not ignore entries starting with '.' .
-- **-r**: reverser order while sorting.
-- **-t**: sort by time, newest first.
+- **-R**: list subdirectories recursively. >OK<
+- **-a**: do not ignore entries starting with '.' . >OK<
+- **-r**: reverser order while sorting. >OK<
+- **-t**: sort by time, newest first. >OK<
 
 As bonuses :
 - **-i**: prints the inode (unique identifier) of the file.

@@ -2,57 +2,43 @@
 
 char	*format_path(char **oldpath)
 {
-	char	*last_sl = NULL;
+	// char	*last_sep = NULL;
 	char	*tmp_str = NULL;
-	int		len = 0;
+	int		len = ft_strlen(*oldpath);
 
-	last_sl = ft_strrchr(*oldpath, '/');
-	if (last_sl != NULL)
-	{
-		if (*(last_sl - 1) == '/')
-		{
-			while (last_sl != *oldpath && *last_sl == '/')
-				--last_sl;
-		}
-		tmp_str = ft_calloc(last_sl - *oldpath + 2, 1);
-		ft_strlcpy(tmp_str, *oldpath, last_sl - *oldpath + 2);
-		*oldpath = tmp_str;
-	}
-	else
-	{
-		len = ft_strlen(*oldpath);
-		tmp_str = ft_calloc(len + 2, 1);
-		ft_strlcpy(tmp_str, *oldpath, len + 1);
-		tmp_str[len] = '/';
-		free(*oldpath);
-		*oldpath = tmp_str;
-	}
+	if (*oldpath == NULL || (*oldpath)[ft_strlen(*oldpath) - 1] == '/')
+	 	return (*oldpath);
+	tmp_str = ft_calloc(len + 2, 1);
+	ft_strlcpy(tmp_str, *oldpath, len + 1);
+	tmp_str[len] = '/';
+	free(*oldpath);
+	*oldpath = tmp_str;
 	return (*oldpath);
 }
 
 char	*path_update_subdir(char *oldpath, char *to_add)
 {
-	char	*tmp = NULL;
+	char	*tmp = oldpath;
+	bool	to_free = 0;
 	
 	if (to_add != NULL)
 	{
-		if (oldpath != NULL)
+		if (oldpath != NULL && oldpath[ft_strlen(oldpath) - 1] != '/')
 		{
-			format_path(&oldpath);
+			to_free = 1;
 			tmp = ft_strjoin(oldpath, "/");
 			if (tmp == NULL)
 			{
 				print_err(errno);
 				return (NULL);
 			}
-			free(oldpath);
 		}
 		oldpath = ft_strjoin(tmp, to_add);
 	}
+	if (to_free == 1 && tmp != NULL)
+		free(tmp);
 	if (oldpath == NULL)
 		print_err(errno);
-	if (tmp != NULL)
-		free(tmp);
 	return (oldpath);
 }
 

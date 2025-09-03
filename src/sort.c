@@ -14,7 +14,6 @@ int16_t	nc_strcmp(char *s1, char *s2) // non-case_strcmp()
 
 int16_t	ft_strcmp(const char *s1, const char *s2)
 {
-	printf("comparing %s & %s\n", s1, s2);
 	if (s1 == NULL && s2 == NULL)
 		return (0);
 	else if (s1 != NULL && s2 == NULL)
@@ -24,10 +23,7 @@ int16_t	ft_strcmp(const char *s1, const char *s2)
 	while (*s1 || *s2)
 	{
 		if (*s1 != *s2)
-		{
-			printf("*s1 != *s2 => %c - %c = %d\n", *s1, *s2, *s1 - *s2);
 			return (*s1 - *s2);
-		}
 		s1++;
 		s2++;
 	}
@@ -115,13 +111,10 @@ void	sort_entries(uint8_t type, t_ftls *data)
 			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
 			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
 		}
-		// printf("Comparing %s & %s\n", rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
 		cont = 0;
 		switch (type)
 		{
-			// Revoir le system de comparaison pour le faire similaire a check_sorted_entries()
 			case ALPHAB:
-				// cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0) & 1;
 				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
 				cont = (tmp_res < 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0)) & 1;
 				break ;
@@ -129,11 +122,8 @@ void	sort_entries(uint8_t type, t_ftls *data)
 				cont = (tm[0] >= tm[1]) & 1;
 				break ;
 			case R_ALPHAB:
-				printf(" ======================\n%s | %s => tmp_res == %d\n", rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name, tmp_res);
-				// cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0) & 1;
 				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
 				cont = (tmp_res > 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0)) & 1;
-				// printf("cont = %d\n", cont);
 				fflush(stdout);
 				break ;
 			case R_TIME:
@@ -169,10 +159,7 @@ bool	check_sorted_tolist(char **to_list, const bool reversed)
 	{
 		if ((reversed == 1 && filename_cmp(*r, *r1) <= 0) \
 			|| (reversed == 0 && filename_cmp(*r, *r1) >= 0))
-		{
-			printf("fdlA;\n");
 			return (0);
-		}
 		r = r1++;
 	}
 	return (1);

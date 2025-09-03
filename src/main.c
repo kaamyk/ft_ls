@@ -7,7 +7,6 @@ int	main(int argc, char **argv)
 	uint16_t	ctr = 0;
 	
 	parser(argc, argv, &data);
-	printf("> Parser OK <\n");
 		
 	if (data.to_list == NULL)
 	{
@@ -20,7 +19,6 @@ int	main(int argc, char **argv)
 		free_tab(data.to_list);
 		exit(1);
 	}
-	printf("> Env OK <\n");
 	sort_tolist(&data);
 	if (data.to_list != NULL)
 	{
@@ -39,6 +37,7 @@ int	main(int argc, char **argv)
 	{
 		if (ftls(&data, root) == 1)
 		{
+			free(root);
 			free_t_ftls(&data);
 			exit(LS_ERR_FATAL);
 		}

@@ -4,7 +4,7 @@ void	ftls_display(t_ftls *tmp_data)
 {
 	uint8_t	sort_type = ALPHAB;
 
-	if ((tmp_data->recursive == 1 || tmp_data->to_list != NULL) && tmp_data->nb_to_list > 1)
+	if (tmp_data->recursive == 1 || tmp_data->to_list != NULL)
 		ft_printf("%s:\n", tmp_data->current_dir);
 	if (tmp_data->time_sort == 1)
 		sort_type |= 1;
@@ -50,20 +50,20 @@ bool	ftls(t_ftls *data, char *dirname)
 	t_ftls		tmp_data = {0};
 
 	ft_memcpy(&tmp_data, data, sizeof(t_ftls));
-	
 	tmp_data.raw_entries = NULL;
 	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
-	// printf("Before get_entries() => tmp_data.current_dir -> %s\n", tmp_data.current_dir);
 	if (get_entries(&tmp_data) == 1)
 	{
 		free(tmp_data.current_dir);
 		return (1);
 	}
 	ftls_display(&tmp_data);
-	if (tmp_data.recursive == 1
-		&& recursive(&tmp_data, r_entries) == 1)
+	if (tmp_data.recursive == 1)
+	{
+		if (recursive(&tmp_data, r_entries) == 1)
 			return (1);
+	}
 	else
 		ft_printf("\n");
 	free(tmp_data.current_dir);

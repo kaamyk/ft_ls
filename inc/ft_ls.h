@@ -114,7 +114,8 @@ size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
 
 /* === get_entries.c === */
-bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_entries, t_file_list *tmp_file);
+void	leave_get_entries(DIR *dir, struct stat *tmp_stat, struct dirent *entry, char *buf_path);
+bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_entries, t_file_list *tmp_file, char *buf_path);
 bool	get_entries(t_ftls *data);
 
 /* === path.c === */
