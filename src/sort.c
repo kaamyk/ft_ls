@@ -12,6 +12,28 @@ int16_t	nc_strcmp(char *s1, char *s2) // non-case_strcmp()
 	return (0);
 }
 
+int16_t	ft_strcmp(const char *s1, const char *s2)
+{
+	printf("comparing %s & %s\n", s1, s2);
+	if (s1 == NULL && s2 == NULL)
+		return (0);
+	else if (s1 != NULL && s2 == NULL)
+		return (1);
+	else if (s1 == NULL && s2 != NULL)
+		return (-1);
+	while (*s1 || *s2)
+	{
+		if (*s1 != *s2)
+		{
+			printf("*s1 != *s2 => %c - %c = %d\n", *s1, *s2, *s1 - *s2);
+			return (*s1 - *s2);
+		}
+		s1++;
+		s2++;
+	}
+	return (0);
+}
+
 int16_t	filename_cmp(char *fname1, char *fname2)
 {
 	if (fname1 && *fname1 == '.')
@@ -27,25 +49,28 @@ int16_t	filename_cmp(char *fname1, char *fname2)
 	return (nc_strcmp(fname1, fname2));
 }
 
+
+
 bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 {
 	t_file_list	*rs[2] =  {raw_entries, NULL};
 	time_t		tm[2] = {0};
+	int			tmp_res = 0;
 	
 	while (rs[0]->next != NULL)
 	{
 		rs[1] = rs[0]->next;
 		if ((type & 1) == 1)
 		{
-			// printf("type time\n");
 			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
 			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
-			// printf("tm[0] == %ld | tm[1] = %ld\n", tm[0], tm[1]);
 		}
 		switch (type)
 		{
 			case ALPHAB:
-				if (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0)
+			 	tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				if (tmp_res > 0
+					|| (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0))
 					return (0);
 				break ;
 			case TIME:
@@ -53,7 +78,9 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 					return (0);
 				break ;
 			case R_ALPHAB:
-				if (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0)
+			 	tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				if (tmp_res < 0
+					|| (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0))
 					return (0);
 				break ;
 			case R_TIME:
@@ -70,10 +97,11 @@ bool	check_sorted_entries(t_file_list *raw_entries, uint8_t type)
 
 void	sort_entries(uint8_t type, t_ftls *data)
 {
-	t_file_list	*rs[2] =  {data->raw_entries, data->raw_entries->next};
-	t_file		tmp = {0};
-	long		tm[2] = {0};
-	bool		cont = 0;
+	t_file_list	*rs[2] =  {data->raw_entries, data->raw_entries->next};	// runners trough list
+	t_file		tmp = {0};		// swap
+	int			tmp_res = 0;
+	long		tm[2] = {0};	// time
+	bool		cont = 0;		// continue
 
 	while (check_sorted_entries(data->raw_entries, type) == 0)
 	{
@@ -87,17 +115,26 @@ void	sort_entries(uint8_t type, t_ftls *data)
 			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
 			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
 		}
+		// printf("Comparing %s & %s\n", rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
 		cont = 0;
 		switch (type)
 		{
+			// Revoir le system de comparaison pour le faire similaire a check_sorted_entries()
 			case ALPHAB:
-				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) <= 0) & 1;
+				// cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0) & 1;
+				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				cont = (tmp_res < 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0)) & 1;
 				break ;
 			case TIME:
 				cont = (tm[0] >= tm[1]) & 1;
 				break ;
 			case R_ALPHAB:
-				cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) >= 0) & 1;
+				printf(" ======================\n%s | %s => tmp_res == %d\n", rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name, tmp_res);
+				// cont = (filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0) & 1;
+				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				cont = (tmp_res > 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0)) & 1;
+				// printf("cont = %d\n", cont);
+				fflush(stdout);
 				break ;
 			case R_TIME:
 				cont = (tm[0] <= tm[1]) & 1;
@@ -158,7 +195,6 @@ void	sort_tolist(t_ftls *data)
 			r = data->to_list;
 			r1 = r + 1;
 		}
-		// Integrer l'option reverse
 		if ((data->reversed == 1 && filename_cmp(*r, *r1) >= 0) \
 			|| (data->reversed == 0 && filename_cmp(*r, *r1) <= 0))
 		{

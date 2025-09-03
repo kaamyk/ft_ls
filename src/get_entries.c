@@ -59,6 +59,7 @@ bool	get_entries(t_ftls *data)
 	ft_strcpy(buf_path, data->current_dir);
 	while ((entry = readdir(dir)) != NULL)
 	{
+		printf("entry->d_name == %s\n", entry->d_name);
 		new_file = ft_calloc(1, sizeof(t_file_list));
 		if (new_file == NULL)
 			return (err_get_entries(errno, dir, buf_stat, data->raw_entries, new_file));
@@ -67,8 +68,6 @@ bool	get_entries(t_ftls *data)
 			data->lgest_fname = ft_strlen(new_file->file.dirent.d_name);
 		if (data->long_format == 1 || data->time_sort == 1)
 		{
-			// Update le path pour file qu'on lit. Actuellement on lit en boucle le meme
-			// Check la ligne en dessous
 			buf_path =  path_update_file(buf_path, entry->d_name);
 			// printf("entry->name == %s\n", entry->d_name);
 			if (stat(buf_path, buf_stat) == -1)

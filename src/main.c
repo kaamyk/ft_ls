@@ -11,7 +11,7 @@ int	main(int argc, char **argv)
 		
 	if (data.to_list == NULL)
 	{
-		root = ft_strdup(".");
+		root = ft_strdup("./");
 		if (root == NULL)
 			return (1);
 	}
@@ -22,15 +22,26 @@ int	main(int argc, char **argv)
 	}
 	printf("> Env OK <\n");
 	sort_tolist(&data);
-	while (data.to_list[ctr] != NULL)
+	if (data.to_list != NULL)
 	{
-		data.to_list[ctr] = format_path(&data.to_list[ctr]);
-		if (ftls(&data, data.to_list[ctr]) == 1)
+		while (data.to_list[ctr] != NULL)
+		{
+			data.to_list[ctr] = format_path(&data.to_list[ctr]);
+			if (ftls(&data, data.to_list[ctr]) == 1)
+			{
+				free_t_ftls(&data);
+				exit(LS_ERR_FATAL);
+			}
+			++ctr;
+		}
+	}
+	else
+	{
+		if (ftls(&data, root) == 1)
 		{
 			free_t_ftls(&data);
 			exit(LS_ERR_FATAL);
 		}
-		++ctr;
 	}
 	free(root);	
 	free_t_ftls(&data);
