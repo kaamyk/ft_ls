@@ -17,9 +17,15 @@
 #include <errno.h>
 #include <error.h>
 #include <limits.h>
+#include <grp.h>
 
 #include "../ft_libft/inc/libft.h"
 #include "../ft_printf/inc/ft_printf.h"
+
+#define SEC_IN_MONTH	2629746
+#define SEC_IN_DAY		86400
+#define SEC_IN_HOUR		3600
+#define SEC_IN_MIN		60
 
 enum	ret_code
 {
@@ -88,7 +94,9 @@ bool	check_sorted_tolist(char **to_list, bool reversed);
 void	sort_tolist(t_ftls *data);
 
 /* === display.c === */
-void	display(t_file_list *entries, bool list_all);
+void	display_rights(t_file_list *entry);
+void	display_long_format(t_file_list *entry, uint8_t alignment[3]);
+void	display(t_file_list *entries, bool long_format, bool list_all);
 
 /* === parser.c === */
 void	parser(int argc, char **argv, t_ftls *opts);

@@ -11,7 +11,7 @@ void	ftls_display(t_ftls *tmp_data)
 	if (tmp_data->reversed == 1)
 		sort_type |= 2;
 	sort_entries(sort_type, tmp_data);
-	display(tmp_data->raw_entries, tmp_data->list_all);
+	display(tmp_data->raw_entries, tmp_data->long_format, tmp_data->list_all);
 }
 
 bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
