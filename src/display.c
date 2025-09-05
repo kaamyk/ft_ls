@@ -63,7 +63,7 @@ void	display_long_format(t_file_list *entry, uint8_t long_format_data[4])
 	write(STDOUT_FILENO, "\n", 1);
 }
 
-void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks)
+void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, const bool list_all)
 {
 	t_file_list	*runner = entries;
 	int			tmp = 0;
@@ -72,17 +72,21 @@ void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uin
 
 	while (runner != NULL)
 	{
-		us = getpwuid(runner->file.stat.st_uid);
-		gr = getgrgid(runner->file.stat.st_gid);
-		if (ft_strlen(us->pw_name) > long_format_data[0])
-			long_format_data[0] = ft_strlen(us->pw_name);
-		if ((tmp = ft_strlen(gr->gr_name)) > long_format_data[1])
-			long_format_data[1] = tmp;
-		if ((tmp = ft_nblen(runner->file.stat.st_size)) > long_format_data[2])
-			long_format_data[2] = tmp;
-		if ((tmp = ft_nblen(runner->file.stat.st_nlink)) > long_format_data[3])
-			long_format_data[3] = tmp;
-		*total_blocks += runner->file.stat.st_blocks;
+		if ((list_all == 0 && runner->file.dirent.d_name[0] != '.')
+			|| (list_all == 1))
+		{
+			us = getpwuid(runner->file.stat.st_uid);
+			gr = getgrgid(runner->file.stat.st_gid);
+			if (ft_strlen(us->pw_name) > long_format_data[0])
+				long_format_data[0] = ft_strlen(us->pw_name);
+			if ((tmp = ft_strlen(gr->gr_name)) > long_format_data[1])
+				long_format_data[1] = tmp;
+			if ((tmp = ft_nblen(runner->file.stat.st_size)) > long_format_data[2])
+				long_format_data[2] = tmp;
+			if ((tmp = ft_nblen(runner->file.stat.st_nlink)) > long_format_data[3])
+				long_format_data[3] = tmp;
+			*total_blocks += runner->file.stat.st_blocks;
+		}
 		runner = runner->next;
 	}
 }
@@ -94,9 +98,11 @@ void	display(t_file_list *entries, bool long_format, bool list_all)
 	// finir le calcul de total blocks.
 	uint32_t	total_blocks = 0;
 
-	get_long_format_data(entries, long_format_data, &total_blocks);
 	if (long_format == 1)
-		ft_printf("total %d\n",total_blocks); 
+	{
+		get_long_format_data(entries, long_format_data, &total_blocks, list_all);
+		ft_printf("total %d\n", total_blocks / 2); // Divide by 2 => stat.st_blocks counts 512 bytes blocks. GNU ls count 1K block. So 2 times bigger.
+	}
 	while (runner != NULL)
 	{
 		if (list_all == 1 || runner->file.dirent.d_name[0] != '.')
