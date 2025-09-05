@@ -108,11 +108,9 @@ void	display(t_file_list *entries, bool long_format, bool list_all)
 		if (list_all == 1 || runner->file.dirent.d_name[0] != '.')
 		{
 			if (long_format == 1)
-			{
 				display_long_format(runner, long_format_data);
-			}
 			else
-				ft_printf("%s ", runner->file.dirent.d_name);
+				ft_printf("%s  ", runner->file.dirent.d_name);
 		}
 		runner = runner->next;
 	}
