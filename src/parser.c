@@ -8,6 +8,12 @@ void	print_parser(t_ftls *data)
 	ft_printf("===============\n");
 }
 
+void	leave_parser(char **to_list, const int err_code)
+{
+	free_tab(to_list);
+	exit(err_code);
+}
+
 void	parser(const int argc, char **argv, t_ftls *data)
 {
 	if (argc == 1)
@@ -18,8 +24,13 @@ void	parser(const int argc, char **argv, t_ftls *data)
 	
 	while (*runner != NULL)
 	{
-		if (*runner[0] == '-')
+		if ((*runner)[0] == '-') // item is an argument
 		{
+			if ((*runner)[1] == '-' && ft_strncmp(*runner, "--help", 6) == 0)
+			{
+				print_usage();
+				leave_parser(to_list, LS_SUCCESS);
+			}
 			while (*(++*runner) != '\0')
 			{
 				switch (**runner)
@@ -39,27 +50,23 @@ void	parser(const int argc, char **argv, t_ftls *data)
 					case 't':
 						data->time_sort = 1;
 						break ;
+					case 'h':
+						break ;
 					default:
-					 	free_tab(to_list);
-						ft_printf("ft_ls: invalid option -- %c\nTry \'ft_ls --help\' for more information.\n", **runner);
-						exit(LS_ERR_FATAL);
+						ft_printf("ft_ls: invalid option \'%c\'\nTry \'ft_ls --help\' for more information.\n", **runner);
+						leave_parser(to_list, LS_ERR_FATAL);
 						break ;
 				}
 			}
 		}
-		else if (*runner != NULL)
+		else if (*runner != NULL)	// item is a filename/dirname
 		{
 			to_list = tab_append(to_list, *runner);
 			if (to_list == NULL)
-				exit(LS_ERR_FATAL) ;
+				exit(LS_ERR_FATAL);
 			++data->nb_to_list;
 		}
 		++runner;
 	}
 	data->to_list = to_list;
-	print_parser(data);
-	ft_printf("to_list : \n");
-	print_tab(data->to_list);
-	ft_printf("=============\n");
-	return ; 
 }

@@ -95,7 +95,6 @@ void	display(t_file_list *entries, bool long_format, bool list_all)
 {
 	t_file_list	*runner 	= entries;
 	uint8_t		long_format_data[4] = {0};		// 0: username, 1: groupanme, 2: size, 3: nb link
-	// finir le calcul de total blocks.
 	uint32_t	total_blocks = 0;
 
 	if (long_format == 1)
@@ -115,4 +114,9 @@ void	display(t_file_list *entries, bool long_format, bool list_all)
 		runner = runner->next;
 	}
 	ft_printf("\n");
+}
+
+void	print_usage(void)
+{
+	write(STDOUT_FILENO, "Usage: ft_ls [OPTION] [FILE]\nArguments:\n\t-a : do not ignore entries starting with a .\n\t-l : use a long listing format\n\t-r : reverse order while sorting\n\t-R : list subdirectiories recursively\n\t-t : sort by time, newest first\n", 225);
 }

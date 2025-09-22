@@ -97,6 +97,7 @@ void	sort_tolist(t_ftls *data);
 void	display_rights(t_file_list *entry);
 void	display_long_format(t_file_list *entry, uint8_t alignment[3]);
 void	display(t_file_list *entries, bool long_format, bool list_all);
+void	print_usage(void);
 
 /* === parser.c === */
 void	parser(int argc, char **argv, t_ftls *opts);

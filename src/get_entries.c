@@ -30,19 +30,19 @@ void	leave_get_entries(DIR *dir, struct stat *tmp_stat, struct dirent *entry, ch
 bool	get_entries_init(const t_ftls *data, DIR **dir, struct stat **buf_stat, char **buf_path)
 {
 	*dir = opendir(data->current_dir);
-	if (dir == NULL)
+	if (*dir == NULL)
 	{
 		print_err(errno);
 		return (1);
 	}
 	*buf_stat = ft_calloc(1, sizeof(struct stat));
-	if (buf_stat == NULL)
+	if (*buf_stat == NULL)
 	{
 		print_err(errno);
 		return (1);
 	}
 	*buf_path = ft_calloc(PATH_MAX, 1);
-	if (buf_path == NULL)
+	if (*buf_path == NULL)
 	{
 		print_err(errno);
 		free(*buf_stat);

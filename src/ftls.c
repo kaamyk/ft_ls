@@ -22,6 +22,10 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 	while (r_entries != NULL)
 	{
 		d_name = r_entries->file.dirent.d_name;
+		printf("d_name == %s\n", d_name);
+		// FOR TESTS CLARITY
+		// if (ft_strnstr(r_entries->file.dirent.d_name, ".git", 4) == NULL
+		// 	&& r_entries->file.dirent.d_type == DT_DIR)
 		if (r_entries->file.dirent.d_type == DT_DIR)
 		{ 
 			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0 
