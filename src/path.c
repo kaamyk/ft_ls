@@ -42,7 +42,7 @@ char	*path_update_subdir(char *oldpath, char *to_add)
 	return (oldpath);
 }
 
-char	*path_update_file(char *oldpath, char *to_add)
+char	*path_update_file(char *oldpath, const char *to_add)
 {
 	char	*last_sep = ft_strrchr(oldpath, '/');
 	unsigned int len_to_keep = last_sep - oldpath + 1;

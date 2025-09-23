@@ -22,7 +22,6 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 	while (r_entries != NULL)
 	{
 		d_name = r_entries->file.dirent.d_name;
-		printf("d_name == %s\n", d_name);
 		// FOR TESTS CLARITY
 		// if (ft_strnstr(r_entries->file.dirent.d_name, ".git", 4) == NULL
 		// 	&& r_entries->file.dirent.d_type == DT_DIR)
@@ -57,7 +56,8 @@ bool	ftls(t_ftls *data, char *dirname)
 	tmp_data.raw_entries = NULL;
 	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
-	if (get_entries(&tmp_data) == 1)
+	if ((tmp_data.itself == 1 && get_itself(&tmp_data) == 1)
+		|| get_entries(&tmp_data) == 1)
 	{
 		free(tmp_data.current_dir);
 		return (1);

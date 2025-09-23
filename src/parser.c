@@ -50,7 +50,21 @@ void	parser(const int argc, char **argv, t_ftls *data)
 					case 't':
 						data->time_sort = 1;
 						break ;
-					case 'h':
+					case 'd':
+						data->itself = 1;
+						break ;
+					case 'i':
+						data->inodes = 1;
+						break ;
+					case 'n':
+					 	data->ids = 1;
+						break ;
+					case 'U':
+					 	data->dont_sort = 1;
+						break ;
+					case 'f':
+						data->itself = 1;
+						data->list_all = 1;
 						break ;
 					default:
 						ft_printf("ft_ls: invalid option \'%c\'\nTry \'ft_ls --help\' for more information.\n", **runner);

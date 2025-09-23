@@ -26,6 +26,15 @@
 #define SEC_IN_DAY		86400
 #define SEC_IN_HOUR		3600
 #define SEC_IN_MIN		60
+#define RECURSIVE		1
+#define LONG_FORMAT		2
+#define LIST_ALL		4
+#define REVERSED		8
+#define TIME_SORT		16
+#define ITSELF			32
+#define INODES			64
+#define IDS				128
+#define DONT_SORT		256
 
 enum	ret_code
 {
@@ -64,6 +73,11 @@ typedef struct	s_ftls
 	bool	list_all;
 	bool	reversed;
 	bool	time_sort;
+	bool	itself;
+	bool	inodes;
+	bool	ids;
+	bool	dont_sort;
+	uint16_t	options;
 
 	char		**to_list;
 	t_file_list	*raw_entries;	// linked list
@@ -123,14 +137,16 @@ size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
 
 /* === get_entries.c === */
-void	leave_get_entries(DIR *dir, struct stat *tmp_stat, struct dirent *entry, char *buf_path);
+void	leave_get_entries(DIR *dir, char *buf_path);
 bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_entries, t_file_list *tmp_file, char *buf_path);
 bool	get_entries(t_ftls *data);
+bool	get_itself(t_ftls *data);
 
 /* === path.c === */
 char	*format_path(char **oldpath);
 char	*path_update_subdir(char *oldpath, char *to_add);
-char	*path_update_file(char *oldpath, char *to_add);
+char	*path_update_file(char *oldpath, const char *to_add);
+
 
 /* === ftls.c === */
 void	ftls_display(t_ftls *tmp_data);
