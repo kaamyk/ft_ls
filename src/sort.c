@@ -97,7 +97,7 @@ void	sort_entries(uint8_t type, t_ftls *data)
 	t_file		tmp = {0};		// swap
 	int			tmp_res = 0;
 	long		tm[2] = {0};	// time
-	bool		cont = 0;		// continue
+	bool		cont = 0;		// continue ?
 
 	while (check_sorted_entries(data->raw_entries, type) == 0)
 	{

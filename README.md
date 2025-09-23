@@ -11,17 +11,23 @@
 - [Constraints](#constraints)
 	- [Allowed functions](#allowed-functions)
 - [Theory](#theory)
+	- [Syntax](#syntax)
+	- [Modularity](#modularity)
+	- [Options](#options)
 - [In practice](#in-practice)
 	- [The parser](#1the-parser)
 	- [The basics](#2the-basics-readdir-and-display-function)
-	- [Recursive]()
+	- [Recursive](#3recursive--r)
+	- [List all](#4list-all--a)
+	- [Sorting parameters](#5sorting-parameters--r-t)
+	- [Long format](#6long-format--l)
 
 ## Usage:
 	TODO
 ## Goals:
 ### General:
 - **Recreate** the *ls* Unix command in C.
-- Learn **new function** from operating system's API associated with data structures.
+- Learn **new functions** from operating system's API associated with data structures.
 - Think about the code structure **before starting** due to certains flags (-R: recursive).
 
 ### In details:
@@ -61,7 +67,7 @@ We will then take special care to **separate** the code (in particular options) 
 
 ### Options:
 Here is a detailed list of the options required:
-- **-l**: use a long listing format. One line for each item with informations about rights, type, owner, group,  size, last modified and the filename.
+- **-l**: use a long listing format. One line for each item with informations about rights, type, owner, group,  size, last modified and the filename. >OK<
 - **-R**: list subdirectories recursively. >OK<
 - **-a**: do not ignore entries starting with '.' . >OK<
 - **-r**: reverser order while sorting. >OK<
@@ -70,6 +76,9 @@ Here is a detailed list of the options required:
 As bonuses :
 - **-i**: prints the inode (unique identifier) of the file.
 - **-n**: like -l but prints the user and group ID instead of names.
+- **-d**: list directory themself, not their content.
+- **-U**: do not sort directory entries.
+- **-f**: same as -aU
 
 ## In practice:
 
@@ -189,7 +198,7 @@ Simply run trough the linked list of the entries read by the *get_entries()* fun
 
 > With the above code, we can run a simple **ls** command without argument nor options.
 
-### 3/	Recursive
+### 3/	Recursive (-R)
 > The recursive part of *ls* needs to be done from the very beginning.
 
 <ins>Let's code</ins>:
@@ -243,7 +252,7 @@ bool	ftls(t_ftls *data, char *dirname)
 		&& recursive(&tmp_data, r_entries) == 1)
 			return (1);
 	else
-		ft_printf("\n");
+		ft_printf("\n);
 	free(tmp_data.current_dir);
 	free_entries(tmp_data.raw_entries);
 	return (0);
@@ -251,7 +260,7 @@ bool	ftls(t_ftls *data, char *dirname)
 ```
 
 The recursive part is called in the ```bool	ftls(t_ftls *, char *);``` function at the line:
-```
+```c
 if (tmp_data.recursive == 1
 	&& recursive(&tmp_data, r_entries) == 1)
 		return (1);
@@ -260,3 +269,102 @@ The function ```bool	recursive(t_ftls *, t_file_list *);``` runs through all the
 When all the entries of the new *data->current_dir* are listed, the previous one can continue listing.
 
 > We now have a solid base to add the next options.
+
+
+###	4/List all (-a)
+Well, we simply **print the items begining with a '.' if the "data.list_all" parameter equals 1**.  
+In the function ```void display(t_file_list *entries, bool long format, bool list_all);```, while our runner pointer variable runs through the list of entries, we check the parameter "list_all".
+```c
+while (runner != NULL)
+{
+	if (list_all == 1 || runner->file.dirent.d_name[0] != '.')
+	{
+		if (long_format == 1)
+			display_long_format(runner, long_format_data);
+		else
+			ft_printf("%s  ", runner->file.dirent.d_name);
+	}
+	runner = runner->next;
+}
+```
+Same logic for the recursive listing in ```bool	recursive(t_ftls *, t_file_list *);``` line 15.
+```c
+if (d_name[0] == '.' && tmp_data->list_all == 0)
+	goto _next;
+```
+###	5/	Sorting parameters (-r/-t)
+By default, the "ls" command lists in alphabetical order.  
+When calling the C function ```struct dirent *readdir(DIR *__dirp);``` the entities we get are not sorted, we simlpy read the memory as it is.  
+So we will have to sort them by hand in our code. I simply implemented a bubble sort algorithm as long as we don't manage thousands of items.  
+```
+void	sort_entries(uint8_t type, t_ftls *data)
+{
+	t_file_list	*rs[2] =  {data->raw_entries, data->raw_entries->next};	// runners trough list
+	t_file		tmp = {0};		// swap
+	int			tmp_res = 0;
+	long		tm[2] = {0};	// time
+	bool		cont = 0;		// continue ?
+
+	while (check_sorted_entries(data->raw_entries, type) == 0)
+	{
+		if (rs[1] == NULL)
+		{
+			rs[0] = data->raw_entries;
+			rs[1] = rs[0]->next;
+		}
+		if ((type & 1) == 1)
+		{
+			tm[0] = (rs[0]->file.stat.st_mtim.tv_sec * 1000000000) + rs[0]->file.stat.st_mtim.tv_nsec;
+			tm[1] = (rs[1]->file.stat.st_mtim.tv_sec * 1000000000) + rs[1]->file.stat.st_mtim.tv_nsec;
+		}
+		cont = 0;
+		switch (type)
+		{
+			case ALPHAB:
+				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				cont = (tmp_res < 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) > 0)) & 1;
+				break ;
+			case TIME:
+				cont = (tm[0] >= tm[1]) & 1;
+				break ;
+			case R_ALPHAB:
+				tmp_res = filename_cmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name);
+				cont = (tmp_res > 0 || (tmp_res == 0 && ft_strcmp(rs[0]->file.dirent.d_name, rs[1]->file.dirent.d_name) < 0)) & 1;
+				fflush(stdout);
+				break ;
+			case R_TIME:
+				cont = (tm[0] <= tm[1]) & 1;
+				break ;
+			default:
+				break ;
+		}
+		if (cont == 1)
+		{
+			rs[0] = rs[0]->next;
+			rs[1] = rs[0]->next;
+		}
+		else
+		{
+			tmp = rs[0]->file;
+			rs[0]->file = rs[1]->file;
+			rs[1]->file = tmp;
+		}
+	}
+}
+``` 
+In this function, we are looping through the entries while they are not sorted.  
+While looping, we check if the **time sort parameter** (bit in this case) equals 1 to get the timestamp if necessary.  
+The **switch instruction**, conditionned by the sorting type, will then trigger the **right comparison** to run.  
+Following the result of the comparison, we **swap** the two entries **or pass** to the next ones.
+
+###	6/	Long format (-l)
+This option display more informations about each entity that is listed. (see more [here](#options)).</br>
+Because we will need more information, we will use :
+- ```struct passwd *getpwuid(uid_t uid);```
+- ```struct group *getgrgid(gid_t gid);```
+- ```int stat(const char *restrict path, struct stat *restrict statbuf);```
+
+These function will give much more informations about an entity as the owners, the number of blocks allocated, etc.  
+With the functions above in mind, the code is pretty straight forward, as you only have to format the data for the display.  
+For more info you can check the function ```void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, const bool list_all)```.
+
