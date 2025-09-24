@@ -1,17 +1,20 @@
 #include "../inc/ft_ls.h"
 
-void	ftls_display(t_ftls *tmp_data)
+void	ftls_display(t_ftls *tmp_data, char *dirname)
 {
 	uint8_t	sort_type = ALPHAB;
 
-	if (tmp_data->recursive == 1 || tmp_data->to_list != NULL)
+	if (tmp_data->recursive == 1 
+		|| (tmp_data->itself == 0 && tmp_data->to_list != NULL && tab_len(tmp_data->to_list) > 1))
+	{
 		ft_printf("%s:\n", tmp_data->current_dir);
+	}
 	if (tmp_data->time_sort == 1)
 		sort_type |= 1;
 	if (tmp_data->reversed == 1)
 		sort_type |= 2;
 	sort_entries(sort_type, tmp_data);
-	display(tmp_data->raw_entries, tmp_data->long_format, tmp_data->list_all);
+	display(tmp_data, dirname);
 }
 
 bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
@@ -57,19 +60,19 @@ bool	ftls(t_ftls *data, char *dirname)
 	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
 	if ((tmp_data.itself == 1 && get_itself(&tmp_data) == 1)
-		|| get_entries(&tmp_data) == 1)
+		|| (tmp_data.itself == 0 && get_entries(&tmp_data) == 1))
 	{
 		free(tmp_data.current_dir);
 		return (1);
 	}
-	ftls_display(&tmp_data);
-	if (tmp_data.recursive == 1)
+	ftls_display(&tmp_data, dirname);
+	if (tmp_data.recursive == 1)	
 	{
 		if (recursive(&tmp_data, r_entries) == 1)
 			return (1);
 	}
-	else
-		ft_printf("\n");
+	else if (tmp_data.itself == 0)
+		write(STDOUT_FILENO, "\n", 1);
 	free(tmp_data.current_dir);
 	free_entries(tmp_data.raw_entries);
 	return (0);

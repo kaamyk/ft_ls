@@ -48,6 +48,8 @@ char	*path_update_file(char *oldpath, const char *to_add)
 	unsigned int len_to_keep = last_sep - oldpath + 1;
 	char	*n_path = ft_calloc(len_to_keep + ft_strlen(to_add) + 1, 1); // length old path + length to_add + NULL byte
 
+	if (n_path == NULL)
+		return (NULL);
 	ft_strlcpy(n_path, oldpath, len_to_keep + 1);
 	ft_memcpy(n_path + len_to_keep, to_add, ft_strlen(to_add));
 	free(oldpath);

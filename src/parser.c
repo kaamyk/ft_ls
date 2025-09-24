@@ -82,5 +82,7 @@ void	parser(const int argc, char **argv, t_ftls *data)
 		}
 		++runner;
 	}
+	if (to_list == NULL)
+		to_list = tab_append(to_list, ".");
 	data->to_list = to_list;
 }

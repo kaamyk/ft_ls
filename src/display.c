@@ -51,20 +51,23 @@ void	display_date(t_file_list *entry)
 	ft_printf("%.12s ", str + 4);
 }
 
-void	display_long_format(t_file_list *entry, uint8_t long_format_data[4])
+void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], bool itself)
 {
+	(void) itself;
 	display_type(entry);
 	display_rights(entry);
 	ft_printf("%.*ld ", long_format_data[3],entry->file.stat.st_nlink);
 	display_group_user_name(entry, long_format_data);
+	// printf("long_format_data[2] == %d\n", long_format_data[2]);
 	ft_printf("%*ld ", long_format_data[2], entry->file.stat.st_size);
 	display_date(entry);
-	write(STDOUT_FILENO, entry->file.dirent.d_name, ft_strlen(entry->file.dirent.d_name));
-	write(STDOUT_FILENO, "\n", 1);
+	// write(STDOUT_FILENO, entry->file.dirent.d_name, ft_strlen(entry->file.dirent.d_name));
+	// write(STDOUT_FILENO, "\n", 1);
 }
 
 void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, const bool list_all)
 {
+	// printf("get_lonf_format_data\n");
 	t_file_list	*runner = entries;
 	int			tmp = 0;
 	struct passwd	*us = NULL;
@@ -72,9 +75,11 @@ void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uin
 
 	while (runner != NULL)
 	{
+		printf("dans while | list_all == %d\n", list_all);
 		if ((list_all == 0 && runner->file.dirent.d_name[0] != '.')
-			|| (list_all == 1))
+			|| list_all == 1)
 		{
+			printf("Dans if\n");
 			us = getpwuid(runner->file.stat.st_uid);
 			gr = getgrgid(runner->file.stat.st_gid);
 			if (ft_strlen(us->pw_name) > long_format_data[0])
@@ -83,6 +88,7 @@ void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uin
 				long_format_data[1] = tmp;
 			if ((tmp = ft_nblen(runner->file.stat.st_size)) > long_format_data[2])
 				long_format_data[2] = tmp;
+			printf("tmp == %d\n", tmp);
 			if ((tmp = ft_nblen(runner->file.stat.st_nlink)) > long_format_data[3])
 				long_format_data[3] = tmp;
 			*total_blocks += runner->file.stat.st_blocks;
@@ -91,23 +97,29 @@ void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uin
 	}
 }
 
-void	display(t_file_list *entries, bool long_format, bool list_all)
+void	display(t_ftls *data, char *dirname)
 {
-	t_file_list	*runner 	= entries;
+	t_file_list	*runner 	= data->raw_entries;
 	uint8_t		long_format_data[4] = {0};		// 0: username, 1: groupanme, 2: size, 3: nb link
 	uint32_t	total_blocks = 0;
 
-	if (long_format == 1)
+	if (data->long_format == 1)
 	{
-		get_long_format_data(entries, long_format_data, &total_blocks, list_all);
-		ft_printf("total %d\n", total_blocks / 2); // Divide by 2 => stat.st_blocks counts 512 bytes blocks. GNU ls count 1K block. So 2 times bigger.
+		get_long_format_data(data->raw_entries, long_format_data, &total_blocks, data->list_all);
+		if (data->itself == 0)
+			ft_printf("total %d\n", total_blocks / 2); // Divide by 2 => stat.st_blocks counts 512 bytes blocks. GNU ls count 1K block. So 2 times bigger.
 	}
 	while (runner != NULL)
 	{
-		if (list_all == 1 || runner->file.dirent.d_name[0] != '.')
+		if (data->list_all == 1 || data->itself == 1 || runner->file.dirent.d_name[0] != '.')
 		{
-			if (long_format == 1)
-				display_long_format(runner, long_format_data);
+			if (data->long_format == 1)
+				display_long_format(runner, long_format_data, data->itself);
+			if (data->itself == 1)
+			{
+				write(STDOUT_FILENO, dirname, ft_strlen(dirname) - 1);
+				write(STDOUT_FILENO, "  ", 2);
+			}
 			else
 				ft_printf("%s  ", runner->file.dirent.d_name);
 		}

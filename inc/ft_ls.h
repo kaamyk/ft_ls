@@ -109,8 +109,9 @@ void	sort_tolist(t_ftls *data);
 
 /* === display.c === */
 void	display_rights(t_file_list *entry);
-void	display_long_format(t_file_list *entry, uint8_t alignment[3]);
-void	display(t_file_list *entries, bool long_format, bool list_all);
+void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], bool itself);
+void	display(t_ftls *data, char *dirname);
+// void	display(t_ftls *data);
 void	print_usage(void);
 
 /* === parser.c === */
@@ -137,8 +138,9 @@ size_t	tab_len(char **tab);
 char	**tab_append(char **tab, char *to_append);
 
 /* === get_entries.c === */
+bool	add_entry(const struct dirent *entry, char *buf_path, t_ftls *data);
 void	leave_get_entries(DIR *dir, char *buf_path);
-bool	err_get_entries(int	err, DIR *dir, struct stat *tmp_stat, t_file_list *raw_entries, t_file_list *tmp_file, char *buf_path);
+bool	err_get_entries(int	err, DIR *dir, char *buf_path);
 bool	get_entries(t_ftls *data);
 bool	get_itself(t_ftls *data);
 
@@ -149,7 +151,8 @@ char	*path_update_file(char *oldpath, const char *to_add);
 
 
 /* === ftls.c === */
-void	ftls_display(t_ftls *tmp_data);
+// void	ftls_display(t_ftls *tmp_data);
+void	ftls_display(t_ftls *tmp_data, char *dirname);
 bool	ftls(t_ftls *data, char *dirname);
 
 /* === main.c === */
