@@ -39,7 +39,7 @@ bool	get_entries_init(const t_ftls *data, DIR **dir, struct stat **buf_stat, cha
 	return (0);
 }
 
-bool	add_entry(const struct dirent *entry, char *buf_path, t_ftls *data)
+bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 {
 	t_file_list		*new_file = NULL;
 	struct stat		buf_stat = {0};
@@ -50,14 +50,13 @@ bool	add_entry(const struct dirent *entry, char *buf_path, t_ftls *data)
 		print_err(errno);
 		return (1);
 	}
-		// return (err_get_entries(errno, dir, &buf_stat, data->raw_entries, new_file, buf_path));
 	ft_memmove(&(new_file->file.dirent), entry, sizeof(struct dirent));
 	if (ft_strlen(new_file->file.dirent.d_name) > data->lgest_fname)
 		data->lgest_fname = ft_strlen(new_file->file.dirent.d_name);
-	if (data->long_format == 1 || data->time_sort == 1)
+	if ((data->options & LONG_FORMAT) || (data->options & TIME_SORT))
 	{
-		buf_path = path_update_file(buf_path, entry->d_name);
-		if (buf_path == NULL || stat(buf_path, &buf_stat) == -1)
+		*buf_path = path_update_file(*buf_path, entry->d_name);
+		if (*buf_path == NULL || stat(*buf_path, &buf_stat) == -1)
 		{
 			free(new_file);
 			return (1);
@@ -65,7 +64,6 @@ bool	add_entry(const struct dirent *entry, char *buf_path, t_ftls *data)
 		new_file->file.stat = buf_stat;
 	}
 	ft_lstadd_back(&(data->raw_entries), new_file);
-	free(buf_path);
 	return (0);
 }
 
@@ -84,13 +82,14 @@ bool	get_entries(t_ftls *data)
 		return (1);
 	}
 	ft_strcpy(buf_path, data->current_dir);
-	format_path(&buf_path);
+	buf_path = format_path(&buf_path);
 	while ((entry = readdir(dir)) != NULL)
 	{
-		if (add_entry(entry, buf_path, data) == 1)
+		if (add_entry(entry, &buf_path, data) == 1)
 		{
 			free(buf_path);
 			closedir(dir);
+			return (1);
 		}
 		++data->nb_entries;
 	}
@@ -102,23 +101,33 @@ bool	get_itself(t_ftls *data)
 {
 	struct dirent	*entry = NULL; // readdir()
 	char			*buf_path = NULL;
-	DIR				*dir = opendir(data->current_dir);
+	char			**runner = data->to_list;
+	DIR				*dir = NULL;
 
-	if (dir == NULL)
-		return (err_get_entries(errno, dir, buf_path));
-	while ((entry = readdir(dir)) != NULL)
-	{
-		if (ft_strncmp(entry->d_name, ".\0", 2) == 0)
-			break ;
-	}
-	if (entry == NULL)
-		return (1);
 	buf_path = ft_calloc(PATH_MAX, 1);
 	if (buf_path == NULL)
 		return (err_get_entries(errno, dir, buf_path));
-	ft_strcpy(buf_path, data->current_dir);
+	ft_strcpy(buf_path, *runner);
 	buf_path = format_path(&buf_path);
-	(void)add_entry(entry, buf_path, data);
-	leave_get_entries(dir, NULL);
+	if (buf_path == NULL)
+		return (err_get_entries(errno, dir, buf_path));
+	while (*runner != NULL)
+	{
+		dir = opendir(*runner);
+		if (dir == NULL)
+		{
+			print_err(errno);
+			continue ;
+		}
+		entry = readdir(dir);
+		if (entry == NULL)
+			return err_get_entries(errno, dir, buf_path);
+		ft_strlcpy(buf_path, *runner, sizeof(*runner));
+		buf_path = format_path(&buf_path);
+		(void)add_entry(entry, &buf_path, data);
+		closedir(dir);
+		++runner;
+	}
+	free(buf_path);
 	return (0);
 }

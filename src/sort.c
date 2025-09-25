@@ -175,15 +175,17 @@ void	sort_tolist(t_ftls *data)
 		r1 = r + 1;
 	else
 		return ;
-	while (check_sorted_tolist(data->to_list, data->reversed) == 0)
+	while (check_sorted_tolist(data->to_list, (data->options & REVERSED)) == 0)
 	{
 		if (*r1 == NULL)
 		{
 			r = data->to_list;
 			r1 = r + 1;
 		}
-		if ((data->reversed == 1 && filename_cmp(*r, *r1) >= 0) \
-			|| (data->reversed == 0 && filename_cmp(*r, *r1) <= 0))
+		// if ((data->reversed == 1 && filename_cmp(*r, *r1) >= 0) 
+		// 	|| (data->reversed == 0 && filename_cmp(*r, *r1) <= 0))
+		if (((data->options & REVERSED) && filename_cmp(*r, *r1) >= 0) 
+			|| (!(data->options & REVERSED) && filename_cmp(*r, *r1) <= 0))
 		{
 			r = r1++;
 			continue ;

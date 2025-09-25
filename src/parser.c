@@ -1,13 +1,5 @@
 #include "../inc/ft_ls.h"
 
-void	print_parser(t_ftls *data)
-{
-	ft_printf("===============\n");
-	ft_printf("Recursive : %d\nLong format : %d\nList all : %d\nReverse : %d\nTime Sort : %d\n", \
-			data->recursive, data->long_format, data->list_all, data->reversed, data->time_sort);
-	ft_printf("===============\n");
-}
-
 void	leave_parser(char **to_list, const int err_code)
 {
 	free_tab(to_list);
@@ -36,35 +28,35 @@ void	parser(const int argc, char **argv, t_ftls *data)
 				switch (**runner)
 				{
 					case 'R':
-						data->recursive = 1;
+						data->options |= RECURSIVE;
 						break ;
 					case 'l':
-						data->long_format = 1;
+						data->options |= LONG_FORMAT;
 						break ;
 					case 'a':
-						data->list_all = 1;
+						data->options |= LIST_ALL;
 						break ;
 					case 'r':
-						data->reversed = 1;
+						data->options |= REVERSED;
 						break ;
 					case 't':
-						data->time_sort = 1;
+						data->options |= TIME_SORT;
 						break ;
 					case 'd':
-						data->itself = 1;
+						data->options |= ITSELF;
 						break ;
 					case 'i':
-						data->inodes = 1;
+						data->options |= INODES;
 						break ;
 					case 'n':
-					 	data->ids = 1;
+						data->options |= IDS;
 						break ;
 					case 'U':
-					 	data->dont_sort = 1;
+						data->options ^= SORT;
 						break ;
 					case 'f':
-						data->itself = 1;
-						data->list_all = 1;
+						data->options |= LIST_ALL;
+						data->options ^= SORT;
 						break ;
 					default:
 						ft_printf("ft_ls: invalid option \'%c\'\nTry \'ft_ls --help\' for more information.\n", **runner);

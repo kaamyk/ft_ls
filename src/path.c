@@ -35,10 +35,10 @@ char	*path_update_subdir(char *oldpath, char *to_add)
 		}
 		oldpath = ft_strjoin(tmp, to_add);
 	}
+	if (!oldpath)
+		write(STDERR_FILENO, "Allocation failed. Leaving\n", 27);
 	if (to_free == 1 && tmp != NULL)
 		free(tmp);
-	if (oldpath == NULL)
-		print_err(errno);
 	return (oldpath);
 }
 

@@ -1,20 +1,24 @@
 #include "../inc/ft_ls.h"
 
-void	ftls_display(t_ftls *tmp_data, char *dirname)
+void	ftls_display(t_ftls *tmp_data)
 {
 	uint8_t	sort_type = ALPHAB;
 
-	if (tmp_data->recursive == 1 
-		|| (tmp_data->itself == 0 && tmp_data->to_list != NULL && tab_len(tmp_data->to_list) > 1))
+	if (!(tmp_data->options & ITSELF)
+		&& ((tmp_data->options & RECURSIVE)
+			|| (tab_len(tmp_data->to_list) > 1)))
 	{
 		ft_printf("%s:\n", tmp_data->current_dir);
 	}
-	if (tmp_data->time_sort == 1)
-		sort_type |= 1;
-	if (tmp_data->reversed == 1)
-		sort_type |= 2;
-	sort_entries(sort_type, tmp_data);
-	display(tmp_data, dirname);
+	if (tmp_data->options & SORT)
+	{
+		if (tmp_data->options & TIME_SORT)
+			sort_type |= 1;
+		if (tmp_data->options & REVERSED)
+			sort_type |= 2;
+		sort_entries(sort_type, tmp_data);
+	}
+	display(tmp_data);
 }
 
 bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
@@ -33,7 +37,7 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0 
 			&& ft_strncmp(d_name, "..", ft_strlen(d_name)) != 0)
 			{
-				if (d_name[0] == '.' && tmp_data->list_all == 0)
+				if (d_name[0] == '.' && !(tmp_data->options & LIST_ALL))
 					goto _next;
 				ft_printf("\n");
 				if (ftls(tmp_data, d_name) == 1)
@@ -59,19 +63,19 @@ bool	ftls(t_ftls *data, char *dirname)
 	tmp_data.raw_entries = NULL;
 	if ((tmp_data.current_dir = path_update_subdir(tmp_data.current_dir, dirname)) == NULL)
 		return (1);
-	if ((tmp_data.itself == 1 && get_itself(&tmp_data) == 1)
-		|| (tmp_data.itself == 0 && get_entries(&tmp_data) == 1))
+	if (((tmp_data.options & ITSELF) && get_itself(&tmp_data))
+		|| (!(tmp_data.options & ITSELF) && get_entries(&tmp_data)))
 	{
 		free(tmp_data.current_dir);
 		return (1);
 	}
-	ftls_display(&tmp_data, dirname);
-	if (tmp_data.recursive == 1)	
+	ftls_display(&tmp_data);
+	if (tmp_data.options & RECURSIVE)
 	{
 		if (recursive(&tmp_data, r_entries) == 1)
 			return (1);
 	}
-	else if (tmp_data.itself == 0)
+	else if (tmp_data.options & ITSELF)
 		write(STDOUT_FILENO, "\n", 1);
 	free(tmp_data.current_dir);
 	free_entries(tmp_data.raw_entries);

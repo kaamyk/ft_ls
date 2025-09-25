@@ -76,9 +76,9 @@ Here is a detailed list of the options required:
 As bonuses :
 - **-i**: prints the inode (unique identifier) of the file.
 - **-n**: like -l but prints the user and group ID instead of names.
-- **-d**: list directory themself, not their content.
-- **-U**: do not sort directory entries.
-- **-f**: same as -aU
+- **-d**: list directory themself, not their content. >OK<
+- **-U**: do not sort directory entries. >OK<
+- **-f**: same as -aU >OK<
 
 ## In practice:
 

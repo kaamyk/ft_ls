@@ -3,12 +3,12 @@
 int	main(int argc, char **argv)
 {
 	char		*root = NULL;
-	t_ftls		data = {0};
 	uint16_t	ctr = 0;
+	t_ftls		data = {0};
 	
+	data.options = SORT;
 	parser(argc, argv, &data);
-		
-	if (data.to_list == NULL)
+	if (!data.to_list || (data.options & ITSELF))
 	{
 		root = ft_strdup("./");
 		if (root == NULL)
@@ -19,10 +19,11 @@ int	main(int argc, char **argv)
 		free_tab(data.to_list);
 		exit(1);
 	}
-	sort_tolist(&data);
-	if (data.to_list != NULL)
+	if (data.options & SORT)
+		sort_tolist(&data);
+	if (data.to_list && !(data.options & ITSELF))
 	{
-		while (data.to_list[ctr] != NULL)
+		while (data.to_list[ctr])
 		{
 			data.to_list[ctr] = format_path(&data.to_list[ctr]);
 			if (ftls(&data, data.to_list[ctr]) == 1)
