@@ -74,8 +74,8 @@ Here is a detailed list of the options required:
 - **-t**: sort by time, newest first. >OK<
 
 As bonuses :
-- **-i**: prints the inode (unique identifier) of the file.
-- **-n**: like -l but prints the user and group ID instead of names.
+- **-i**: prints the inode (unique identifier) of the file. >OK<
+- **-n**: like -l but prints the user and group ID instead of names. >OK<
 - **-d**: list directory themself, not their content. >OK<
 - **-U**: do not sort directory entries. >OK<
 - **-f**: same as -aU >OK<
@@ -368,3 +368,14 @@ These function will give much more informations about an entity as the owners, t
 With the functions above in mind, the code is pretty straight forward, as you only have to format the data for the display.  
 For more info you can check the function ```void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, const bool list_all)```.
 
+### 7/	List itself (-d)
+This option seems useless when running a simple "ls -d". It simply prints you a dot '.' .  
+This function is made to get information about a specific directory without having a complete flooded output. Ex: 'ls -ld ~'.  
+I cannot put all the code modified but I can explain the idea.  
+Wihtout -d the argument you give to the program is passed to opendir(), then to readdir(). The ouputs of readdir() are the data you are printing.  
+With -d it is your arguments are the data you want to print. Because the -d print the folder itlself.  
+So instead of open the directory and loop to get all the outputs in it. We have to loop our arguments, opendir() it, then get the . file and print the data from it.  
+Carefull you have to change the '.' with the argument when you are listing actuals arguments.
+
+
+### 8/	Other options (-)

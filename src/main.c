@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 		free_tab(data.to_list);
 		exit(1);
 	}
-	if (data.options & SORT)
+	if ((data.options & (SORT | TIME_SORT)))
 		sort_tolist(&data);
 	if (data.to_list && !(data.options & ITSELF))
 	{

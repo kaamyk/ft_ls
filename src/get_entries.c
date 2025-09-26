@@ -53,7 +53,7 @@ bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 	ft_memmove(&(new_file->file.dirent), entry, sizeof(struct dirent));
 	if (ft_strlen(new_file->file.dirent.d_name) > data->lgest_fname)
 		data->lgest_fname = ft_strlen(new_file->file.dirent.d_name);
-	if ((data->options & LONG_FORMAT) || (data->options & TIME_SORT))
+	if (data->options & (LONG_FORMAT | TIME_SORT | INODES))
 	{
 		*buf_path = path_update_file(*buf_path, entry->d_name);
 		if (*buf_path == NULL || stat(*buf_path, &buf_stat) == -1)
@@ -74,7 +74,14 @@ bool	get_entries(t_ftls *data)
 	DIR				*dir = opendir(data->current_dir);
 
 	if (dir == NULL)
-		return (err_get_entries(errno, dir, buf_path));
+	{
+		write(STDERR_FILENO, "ft_ls: cannot open directory ", 29);
+		write(STDERR_FILENO, data->current_dir, ft_strlen(data->current_dir));
+		write(STDERR_FILENO, " ", 1);
+		write(STDERR_FILENO, strerror(errno), ft_strlen(strerror(errno)));
+		write(STDERR_FILENO, "\n", 1);
+		return (1);
+	}
 	buf_path = ft_calloc(PATH_MAX, 1);
 	if (buf_path == NULL)
 	{

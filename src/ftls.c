@@ -10,7 +10,7 @@ void	ftls_display(t_ftls *tmp_data)
 	{
 		ft_printf("%s:\n", tmp_data->current_dir);
 	}
-	if (tmp_data->options & SORT)
+	if (tmp_data->options & (SORT | TIME_SORT))
 	{
 		if (tmp_data->options & TIME_SORT)
 			sort_type |= 1;
@@ -29,9 +29,6 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 	while (r_entries != NULL)
 	{
 		d_name = r_entries->file.dirent.d_name;
-		// FOR TESTS CLARITY
-		// if (ft_strnstr(r_entries->file.dirent.d_name, ".git", 4) == NULL
-		// 	&& r_entries->file.dirent.d_type == DT_DIR)
 		if (r_entries->file.dirent.d_type == DT_DIR)
 		{ 
 			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0 
@@ -39,7 +36,7 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 			{
 				if (d_name[0] == '.' && !(tmp_data->options & LIST_ALL))
 					goto _next;
-				ft_printf("\n");
+				write(STDOUT_FILENO, "\n", 1);
 				if (ftls(tmp_data, d_name) == 1)
 				{
 					free(tmp_data->current_dir);
@@ -67,7 +64,7 @@ bool	ftls(t_ftls *data, char *dirname)
 		|| (!(tmp_data.options & ITSELF) && get_entries(&tmp_data)))
 	{
 		free(tmp_data.current_dir);
-		return (1);
+		return (0);
 	}
 	ftls_display(&tmp_data);
 	if (tmp_data.options & RECURSIVE)

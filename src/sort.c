@@ -182,8 +182,6 @@ void	sort_tolist(t_ftls *data)
 			r = data->to_list;
 			r1 = r + 1;
 		}
-		// if ((data->reversed == 1 && filename_cmp(*r, *r1) >= 0) 
-		// 	|| (data->reversed == 0 && filename_cmp(*r, *r1) <= 0))
 		if (((data->options & REVERSED) && filename_cmp(*r, *r1) >= 0) 
 			|| (!(data->options & REVERSED) && filename_cmp(*r, *r1) <= 0))
 		{

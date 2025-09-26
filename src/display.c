@@ -51,12 +51,15 @@ void	display_date(t_file_list *entry)
 	ft_printf("%.12s ", str + 4);
 }
 
-void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *to_list)
+void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *to_list, bool ids)
 {
 	display_type(entry);
 	display_rights(entry);
-	ft_printf("%.*ld ", long_format_data[3],entry->file.stat.st_nlink);
-	display_group_user_name(entry, long_format_data);
+	ft_printf("%*ld ", long_format_data[3], entry->file.stat.st_nlink);
+	if (ids)
+		ft_printf("%*d %*d ", long_format_data[4], entry->file.stat.st_uid, long_format_data[5], entry->file.stat.st_gid);
+	else 
+		display_group_user_name(entry, long_format_data);
 	ft_printf("%*ld ", long_format_data[2], entry->file.stat.st_size);
 	display_date(entry);
 	if (to_list)
@@ -65,7 +68,7 @@ void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *
 		ft_printf("%s\n", entry->file.dirent.d_name);
 }
 
-void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, uint16_t options)
+void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[6], uint32_t *total_blocks, uint16_t options)
 {
 	t_file_list	*runner = entries;
 	int			tmp = 0;
@@ -87,6 +90,12 @@ void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uin
 				long_format_data[2] = tmp;
 			if ((tmp = ft_nblen(runner->file.stat.st_nlink)) > long_format_data[3])
 				long_format_data[3] = tmp;
+			if ((tmp = ft_nblen(runner->file.stat.st_uid)) > long_format_data[4])
+				long_format_data[4] = tmp;
+			if ((tmp = ft_nblen(runner->file.stat.st_gid)) > long_format_data[5])
+				long_format_data[5] = tmp;
+			if ((tmp = ft_nblen(runner->file.stat.st_ino)) > long_format_data[6])
+				long_format_data[6] = tmp;
 			*total_blocks += runner->file.stat.st_blocks;
 		}
 		runner = runner->next;
@@ -97,7 +106,7 @@ void	display(t_ftls *data)
 {
 	t_file_list	*run_entries 	= data->raw_entries;
 	char		**run_to_list	= data->to_list;
-	uint8_t		long_format_data[4] = {0};		// 0: username, 1: groupanme, 2: size, 3: nb link
+	uint8_t		long_format_data[7] = {0};		// 0: username, 1: groupanme, 2: size, 3: nb link, 4: userid, 5: groupid, 6:inode
 	uint32_t	total_blocks = 0;
 
 	if (data->options & LONG_FORMAT)
@@ -110,12 +119,14 @@ void	display(t_ftls *data)
 	{
 		if ((data->options & (LIST_ALL | ITSELF)) || run_entries->file.dirent.d_name[0] != '.')
 		{
+			if (data->options & INODES)
+				ft_printf("%*ld ", long_format_data[6], run_entries->file.stat.st_ino);
 			if (data->options & LONG_FORMAT)
 			{
 				if (data->options & ITSELF)
-					display_long_format(run_entries, long_format_data, *run_to_list);
+					display_long_format(run_entries, long_format_data, *run_to_list, data->options & IDS);
 				else
-					display_long_format(run_entries, long_format_data, NULL);
+					display_long_format(run_entries, long_format_data, NULL, data->options & IDS);
 			}
 			else
 			{
@@ -128,7 +139,8 @@ void	display(t_ftls *data)
 		run_entries = run_entries->next;
 		++run_to_list;
 	}
-	ft_printf("\n");
+	if (!(data->options & LONG_FORMAT))
+		ft_printf("\n");
 }
 
 void	print_usage(void)

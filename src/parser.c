@@ -37,10 +37,10 @@ void	parser(const int argc, char **argv, t_ftls *data)
 						data->options |= LIST_ALL;
 						break ;
 					case 'r':
-						data->options |= REVERSED;
+						data->options |= (REVERSED | SORT);
 						break ;
 					case 't':
-						data->options |= TIME_SORT;
+						data->options |= (TIME_SORT | SORT);
 						break ;
 					case 'd':
 						data->options |= ITSELF;
@@ -49,14 +49,14 @@ void	parser(const int argc, char **argv, t_ftls *data)
 						data->options |= INODES;
 						break ;
 					case 'n':
-						data->options |= IDS;
+						data->options |= (IDS | LONG_FORMAT);
 						break ;
 					case 'U':
-						data->options ^= SORT;
+						data->options &= ~(SORT | TIME_SORT);
 						break ;
 					case 'f':
-						data->options |= LIST_ALL;
-						data->options ^= SORT;
+						data->options |= (LIST_ALL | FFLAG);
+						data->options &= ~(LONG_FORMAT | SORT | TIME_SORT);
 						break ;
 					default:
 						ft_printf("ft_ls: invalid option \'%c\'\nTry \'ft_ls --help\' for more information.\n", **runner);
@@ -74,6 +74,8 @@ void	parser(const int argc, char **argv, t_ftls *data)
 		}
 		++runner;
 	}
+	if (data->options & ITSELF)
+		data->options &= ~(RECURSIVE);
 	if (to_list == NULL)
 		to_list = tab_append(to_list, ".");
 	data->to_list = to_list;

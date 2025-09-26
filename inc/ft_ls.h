@@ -35,6 +35,7 @@
 #define INODES			1 << 6
 #define TIME_SORT		1 << 7
 #define SORT			1 << 8
+#define FFLAG			1 << 9
 
 enum	ret_code
 {
@@ -99,7 +100,7 @@ void	sort_tolist(t_ftls *data);
 
 /* === display.c === */
 void	display_rights(t_file_list *entry);
-void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *to_list);
+void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *to_list, bool ids);
 void	display(t_ftls *data);
 void	print_usage(void);
 
