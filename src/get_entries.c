@@ -56,8 +56,9 @@ bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 	if (data->options & (LONG_FORMAT | TIME_SORT | INODES))
 	{
 		*buf_path = path_update_file(*buf_path, entry->d_name);
-		if (*buf_path == NULL || stat(*buf_path, &buf_stat) == -1)
+		if (*buf_path == NULL || (stat(*buf_path, &buf_stat) == -1 && lstat(*buf_path, &buf_stat) == -1))
 		{
+			print_err(errno);
 			free(new_file);
 			return (1);
 		}

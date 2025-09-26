@@ -3,6 +3,8 @@ void	display_type(t_file_list *entry)
 {
 	if (entry->file.dirent.d_type == DT_DIR)
 		write(STDOUT_FILENO, "d", 1);
+	else if (entry->file.dirent.d_type == DT_LNK)
+		write(STDOUT_FILENO, "l", 1);
 	else
 		write(STDOUT_FILENO, "-", 1);
 }
@@ -132,6 +134,9 @@ void	display(t_ftls *data)
 			{
 				if (data->options & ITSELF)
 					ft_printf("%s  ", *run_to_list);
+				// else if (type == link )
+				// readlink to get the path contained in the link
+				// write(link -> path contained)
 				else
 					ft_printf("%s  ", run_entries->file.dirent.d_name);
 			}
