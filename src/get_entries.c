@@ -63,6 +63,7 @@ bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 			return (1);
 		}
 		new_file->file.stat = buf_stat;
+		new_file->file.fullpath = ft_strdup(*buf_path);
 	}
 	ft_lstadd_back(&(data->raw_entries), new_file);
 	return (0);

@@ -55,6 +55,17 @@ void	display_date(t_file_list *entry)
 
 void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *to_list, bool ids)
 {
+	char	buf[4096]	= {0};
+
+	if (entry->file.dirent.d_type == DT_LNK)
+	{
+		if (readlink(entry->file.fullpath, buf, 4096) == -1)
+		{
+			print_err(errno);
+			return ;
+		}
+		buf[4095] = 0;
+	}
 	display_type(entry);
 	display_rights(entry);
 	ft_printf("%*ld ", long_format_data[3], entry->file.stat.st_nlink);
@@ -62,12 +73,18 @@ void	display_long_format(t_file_list *entry, uint8_t long_format_data[4], char *
 		ft_printf("%*d %*d ", long_format_data[4], entry->file.stat.st_uid, long_format_data[5], entry->file.stat.st_gid);
 	else 
 		display_group_user_name(entry, long_format_data);
-	ft_printf("%*ld ", long_format_data[2], entry->file.stat.st_size);
+	if (entry->file.dirent.d_type == DT_LNK)
+		ft_printf("%*ld ", long_format_data[2], ft_strlen(buf));
+	else
+		ft_printf("%*ld ", long_format_data[2], entry->file.stat.st_size);
 	display_date(entry);
 	if (to_list)
-		ft_printf("%s\n", to_list);
+		ft_printf("%s", to_list);
 	else
-		ft_printf("%s\n", entry->file.dirent.d_name);
+		ft_printf("%s", entry->file.dirent.d_name);
+	if (entry->file.dirent.d_type == DT_LNK)
+		ft_printf(" -> %s", buf);
+	write(STDOUT_FILENO, "\n", 1);
 }
 
 void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[6], uint32_t *total_blocks, uint16_t options)
@@ -134,9 +151,6 @@ void	display(t_ftls *data)
 			{
 				if (data->options & ITSELF)
 					ft_printf("%s  ", *run_to_list);
-				// else if (type == link )
-				// readlink to get the path contained in the link
-				// write(link -> path contained)
 				else
 					ft_printf("%s  ", run_entries->file.dirent.d_name);
 			}
