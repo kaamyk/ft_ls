@@ -14,11 +14,6 @@ int	main(int argc, char **argv)
 		if (root == NULL)
 			return (1);
 	}
-	if (set_env(&data) == -1)
-	{
-		free_tab(data.to_list);
-		exit(1);
-	}
 	if ((data.options & (SORT | TIME_SORT)))
 		sort_tolist(&data);
 	if (data.to_list && !(data.options & ITSELF))
