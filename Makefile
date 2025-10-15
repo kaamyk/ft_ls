@@ -3,7 +3,7 @@
 NAME		=	ft_ls
 
 SRCDIR		=	src
-SRCS		=	$(SRCDIR)/main.c		$(SRCDIR)/parser.c	$(SRCDIR)/utils.c	$(SRCDIR)/env.c		$(SRCDIR)/error.c \
+SRCS		=	$(SRCDIR)/main.c		$(SRCDIR)/parser.c	$(SRCDIR)/utils.c	$(SRCDIR)/error.c \
 				$(SRCDIR)/list.c		$(SRCDIR)/memory.c	$(SRCDIR)/sort.c	$(SRCDIR)/display.c	$(SRCDIR)/ftls.c \
 				$(SRCDIR)/get_entries.c $(SRCDIR)/path.c
 

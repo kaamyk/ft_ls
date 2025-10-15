@@ -5,6 +5,7 @@
 
 ## Summary:
 - [Usage](#usage)
+- [How to test](#how-to-test)
 - [Goals](#goals)
 	- [General](#general)
 	- [In details](#in-details)
@@ -24,6 +25,18 @@
 
 ## Usage:
 	TODO
+
+## How to test:
+Run this command:
+LSFLAG="" && DIR="" && ./ft_ls $LSFLAG $DIR; echo '========='; ls $LSFLAG $DIR
+
+The two variables LSFLAG and DIR will be the arguments passed to ft_ls and ls:
+- **LSFLAG** contains the options (ex:-at)
+- **DIR**	contains the path we want to list
+Each one can be empty. (Example: LSFLAG="-l" && DIR="" <=> "ls -l")
+It will display first the output of *ft_ls*, then ,whatever happens, the output of *ls*.
+**Carefull!** You cannot put multiple path in *DIR*. Your shell will interprete the variable has one unique argument.
+
 ## Goals:
 ### General:
 - **Recreate** the *ls* Unix command in C.
@@ -101,7 +114,7 @@ typedef struct	s_ftls
 	uint8_t		lgest_fname;
 	uint32_t	nb_entries;
 	uint16_t	nb_to_list;
-	
+
 	// env data
 	uid_t	userid;
 	char	*current_dir;
@@ -212,8 +225,8 @@ bool	recursive(t_ftls *tmp_data, t_file_list *r_entries)
 	{
 		d_name = r_entries->file.dirent.d_name;
 		if (r_entries->file.dirent.d_type == DT_DIR)
-		{ 
-			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0 
+		{
+			if (ft_strncmp(d_name, ".", ft_strlen(d_name)) != 0
 			&& ft_strncmp(d_name, "..", ft_strlen(d_name)) != 0)
 			{
 				if (d_name[0] == '.' && tmp_data->list_all == 0)
@@ -272,7 +285,7 @@ When all the entries of the new *data->current_dir* are listed, the previous one
 
 
 ###	4/List all (-a)
-Well, we simply **print the items begining with a '.' if the "data.list_all" parameter equals 1**.  
+Well, we simply **print the items begining with a '.' if the "data.list_all" parameter equals 1**.
 In the function ```void display(t_file_list *entries, bool long format, bool list_all);```, while our runner pointer variable runs through the list of entries, we check the parameter "list_all".
 ```c
 while (runner != NULL)
@@ -293,9 +306,9 @@ if (d_name[0] == '.' && tmp_data->list_all == 0)
 	goto _next;
 ```
 ###	5/	Sorting parameters (-r/-t)
-By default, the "ls" command lists in alphabetical order.  
-When calling the C function ```struct dirent *readdir(DIR *__dirp);``` the entities we get are not sorted, we simlpy read the memory as it is.  
-So we will have to sort them by hand in our code. I simply implemented a bubble sort algorithm as long as we don't manage thousands of items.  
+By default, the "ls" command lists in alphabetical order.
+When calling the C function ```struct dirent *readdir(DIR *__dirp);``` the entities we get are not sorted, we simlpy read the memory as it is.
+So we will have to sort them by hand in our code. I simply implemented a bubble sort algorithm as long as we don't manage thousands of items.
 ```
 void	sort_entries(uint8_t type, t_ftls *data)
 {
@@ -351,10 +364,10 @@ void	sort_entries(uint8_t type, t_ftls *data)
 		}
 	}
 }
-``` 
-In this function, we are looping through the entries while they are not sorted.  
-While looping, we check if the **time sort parameter** (bit in this case) equals 1 to get the timestamp if necessary.  
-The **switch instruction**, conditionned by the sorting type, will then trigger the **right comparison** to run.  
+```
+In this function, we are looping through the entries while they are not sorted.
+While looping, we check if the **time sort parameter** (bit in this case) equals 1 to get the timestamp if necessary.
+The **switch instruction**, conditionned by the sorting type, will then trigger the **right comparison** to run.
 Following the result of the comparison, we **swap** the two entries **or pass** to the next ones.
 
 ###	6/	Long format (-l)
@@ -364,17 +377,17 @@ Because we will need more information, we will use :
 - ```struct group *getgrgid(gid_t gid);```
 - ```int stat(const char *restrict path, struct stat *restrict statbuf);```
 
-These function will give much more informations about an entity as the owners, the number of blocks allocated, etc.  
-With the functions above in mind, the code is pretty straight forward, as you only have to format the data for the display.  
+These function will give much more informations about an entity as the owners, the number of blocks allocated, etc.
+With the functions above in mind, the code is pretty straight forward, as you only have to format the data for the display.
 For more info you can check the function ```void	get_long_format_data(t_file_list *entries, uint8_t long_format_data[4], uint32_t *total_blocks, const bool list_all)```.
 
 ### 7/	List itself (-d)
-This option seems useless when running a simple "ls -d". It simply prints you a dot '.' .  
-This function is made to get information about a specific directory without having a complete flooded output. Ex: 'ls -ld ~'.  
-I cannot put all the code modified but I can explain the idea.  
-Wihtout -d the argument you give to the program is passed to opendir(), then to readdir(). The ouputs of readdir() are the data you are printing.  
-With -d it is your arguments are the data you want to print. Because the -d print the folder itlself.  
-So instead of open the directory and loop to get all the outputs in it. We have to loop our arguments, opendir() it, then get the . file and print the data from it.  
+This option seems useless when running a simple "ls -d". It simply prints you a dot '.' .
+This function is made to get information about a specific directory without having a complete flooded output. Ex: 'ls -ld ~'.
+I cannot put all the code modified but I can explain the idea.
+Wihtout -d the argument you give to the program is passed to opendir(), then to readdir(). The ouputs of readdir() are the data you are printing.
+With -d it is your arguments are the data you want to print. Because the -d print the folder itlself.
+So instead of open the directory and loop to get all the outputs in it. We have to loop our arguments, opendir() it, then get the . file and print the data from it.
 Carefull you have to change the '.' with the argument when you are listing actuals arguments.
 
 
