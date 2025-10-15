@@ -37,3 +37,16 @@ void	ft_lstadd_back(t_file_list **lst, t_file_list *new)
 	else
 		*lst = new;
 }
+
+void	ft_lstfree(t_file_list *lst)
+{
+	t_file_list *next = NULL;
+	
+	while (lst)
+	{
+		next = lst->next;
+		free(lst->file.fullpath);
+		free(lst);
+		lst = next;
+	}
+}

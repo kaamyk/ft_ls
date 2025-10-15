@@ -70,7 +70,7 @@ bool	ftls(t_ftls *data, char *dirname)
 	if (tmp_data.options & RECURSIVE)
 	{
 		if (recursive(&tmp_data, r_entries) == 1)
-			return (1);
+    		return (1);
 	}
 	else if (tmp_data.options & ITSELF)
 		write(STDOUT_FILENO, "\n", 1);

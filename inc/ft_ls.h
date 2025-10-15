@@ -120,6 +120,7 @@ int8_t	set_env(t_ftls *data);
 void		ft_lstadd_front(t_file_list **lst, t_file_list *new);
 t_file_list	*ft_lstlast(t_file_list *lst);
 void		ft_lstadd_back(t_file_list **lst, t_file_list *new);
+void	ft_lstfree(t_file_list *lst);
 
 //	Tables
 void	print_tab(char **tab);

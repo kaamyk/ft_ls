@@ -1,4 +1,8 @@
 #include "../inc/ft_ls.h"
+#include <asm-generic/errno.h>
+#include <dirent.h>
+#include <stdbool.h>
+#include <sys/stat.h>
 
 void	leave_get_entries(DIR *dir, char *buf_path)
 {
@@ -39,6 +43,36 @@ bool	get_entries_init(const t_ftls *data, DIR **dir, struct stat **buf_stat, cha
 	return (0);
 }
 
+bool	err_add_entry(int err, t_file_list *new_file, t_file_list *raw_entries)
+{
+	print_err(err);
+	free(new_file);
+	ft_lstfree(raw_entries);
+	return (1);
+}
+
+bool	get_stat_entry(t_file_list **new_file, t_file_list *raw_entries, struct stat *buf_stat, const struct dirent *entry, char **buf_path)
+{
+	if (entry->d_type == DT_UNKNOWN)
+	{
+		if (lstat(*buf_path, buf_stat) == -1)
+			return (err_add_entry(errno, *new_file, raw_entries));
+		else if (!S_ISLNK(buf_stat->st_mode) && stat(*buf_path, buf_stat) == -1)
+			return (err_add_entry(errno, *new_file, raw_entries));
+		return (0);
+	}
+	else if (entry->d_type == DT_LNK)
+	{
+		if (lstat(*buf_path, buf_stat) == -1)
+			return (err_add_entry(errno, *new_file, raw_entries));
+		else
+			return (0);
+	}
+	if (stat(*buf_path, buf_stat) == -1)
+		return (err_add_entry(errno, *new_file, raw_entries));
+	return (0);
+}
+
 bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 {
 	t_file_list		*new_file = NULL;
@@ -56,12 +90,22 @@ bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 	if (data->options & (LONG_FORMAT | TIME_SORT | INODES))
 	{
 		*buf_path = path_update_file(*buf_path, entry->d_name);
-		if (*buf_path == NULL || (stat(*buf_path, &buf_stat) == -1 && lstat(*buf_path, &buf_stat) == -1))
-		{
-			print_err(errno);
-			free(new_file);
+		// Travail sur les informations des soft links pour ls -l
+		if (!*buf_path)
+			return (err_add_entry(errno, new_file, data->raw_entries));
+		else if (get_stat_entry(&new_file, data->raw_entries, &buf_stat, entry, buf_path))
 			return (1);
-		}
+		// else if (entry->d_type == DT_UNKNOWN)
+		// {
+		// 	if (lstat(*buf_path, &buf_stat) == -1)
+		// 		return (err_add_entry(errno, new_file, data->raw_entries));
+		// 	if (!S_ISLNK(buf_stat.st_mode) && stat(*buf_path, &buf_stat) == -1)
+		// 		return (err_add_entry(errno, new_file, data->raw_entries));
+		// }
+		// else if (entry->d_type == DT_LNK && lstat(*buf_path, &buf_stat) == -1)
+		// 	return (err_add_entry(errno, new_file, data->raw_entries));
+		// else if (stat(*buf_path, &buf_stat) == -1)
+		// 	return (err_add_entry(errno, new_file, data->raw_entries));
 		new_file->file.stat = buf_stat;
 		new_file->file.fullpath = ft_strdup(*buf_path);
 	}
@@ -98,6 +142,7 @@ bool	get_entries(t_ftls *data)
 		{
 			free(buf_path);
 			closedir(dir);
+			
 			return (1);
 		}
 		++data->nb_entries;
