@@ -18,12 +18,13 @@ void	parser(const int argc, char **argv, t_ftls *data)
 	{
 		if ((*runner)[0] == '-') // item is an argument
 		{
-			if ((*runner)[1] == '-' && ft_strncmp(*runner, "--help", 6) == 0)
+			while (*(++*runner) == '-');
+			if (ft_strncmp(*runner, "help", 4) == 0)
 			{
 				print_usage();
 				leave_parser(to_list, LS_SUCCESS);
 			}
-			while (*(++*runner) != '\0')
+			while (*(*runner) != '\0')
 			{
 				switch (**runner)
 				{
@@ -63,6 +64,7 @@ void	parser(const int argc, char **argv, t_ftls *data)
 						leave_parser(to_list, LS_ERR_FATAL);
 						break ;
 				}
+				(*runner)++;
 			}
 		}
 		else if (*runner != NULL)	// item is a filename/dirname
