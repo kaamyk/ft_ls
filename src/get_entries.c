@@ -1,6 +1,7 @@
 #include "../inc/ft_ls.h"
 #include <asm-generic/errno.h>
 #include <dirent.h>
+#include <linux/limits.h>
 #include <stdbool.h>
 #include <sys/stat.h>
 
@@ -90,22 +91,10 @@ bool	add_entry(const struct dirent *entry, char **buf_path, t_ftls *data)
 	if (data->options & (LONG_FORMAT | TIME_SORT | INODES))
 	{
 		*buf_path = path_update_file(*buf_path, entry->d_name);
-		// Travail sur les informations des soft links pour ls -l
 		if (!*buf_path)
 			return (err_add_entry(errno, new_file, data->raw_entries));
 		else if (get_stat_entry(&new_file, data->raw_entries, &buf_stat, entry, buf_path))
 			return (1);
-		// else if (entry->d_type == DT_UNKNOWN)
-		// {
-		// 	if (lstat(*buf_path, &buf_stat) == -1)
-		// 		return (err_add_entry(errno, new_file, data->raw_entries));
-		// 	if (!S_ISLNK(buf_stat.st_mode) && stat(*buf_path, &buf_stat) == -1)
-		// 		return (err_add_entry(errno, new_file, data->raw_entries));
-		// }
-		// else if (entry->d_type == DT_LNK && lstat(*buf_path, &buf_stat) == -1)
-		// 	return (err_add_entry(errno, new_file, data->raw_entries));
-		// else if (stat(*buf_path, &buf_stat) == -1)
-		// 	return (err_add_entry(errno, new_file, data->raw_entries));
 		new_file->file.stat = buf_stat;
 		new_file->file.fullpath = ft_strdup(*buf_path);
 	}
@@ -142,7 +131,6 @@ bool	get_entries(t_ftls *data)
 		{
 			free(buf_path);
 			closedir(dir);
-			
 			return (1);
 		}
 		++data->nb_entries;
@@ -176,7 +164,8 @@ bool	get_itself(t_ftls *data)
 		entry = readdir(dir);
 		if (entry == NULL)
 			return err_get_entries(errno, dir, buf_path);
-		ft_strlcpy(buf_path, *runner, sizeof(*runner));
+		free(buf_path);
+		buf_path = ft_strdup(*runner);
 		buf_path = format_path(&buf_path);
 		(void)add_entry(entry, &buf_path, data);
 		closedir(dir);
